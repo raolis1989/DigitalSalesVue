@@ -74,7 +74,7 @@
                             <span class="black--text">Activo</span>
                         </div>
                         <div v-else>
-                            <span class="red--text">Inactivo</span>
+                            <span class="black--text">Inactivo</span>
                         </div>
                         </v-chip> 
                         
@@ -145,8 +145,8 @@ export default {
         },
     methods:{
              getColor (calories) {
-                 if (calories =true) return 'red'
-                     else return 'orange'
+                 if (calories ==true) return 'blue'
+                     else return 'red'
                   
                 },
             list(){
