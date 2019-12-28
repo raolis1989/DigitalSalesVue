@@ -1,13 +1,6 @@
 <template>
    <v-layout alig-start>
-        <v-flex>
-            <v-data-table
-                :headers="headers"
-                :items="desserts"
-                sort-by="calories"
-                class="elevation-1"
-                :search="search"
-            >
+        <v-flex>  
             <template v-slot:top>
                 <v-toolbar flat color="white">
                     <v-toolbar-title>Categories</v-toolbar-title>
@@ -32,19 +25,10 @@
                                                 <v-container>
                                                     <v-row>
                                                         <v-col cols="12" sm="6" md="4">
-                                                            <v-text-field v-model="editedItem.name" label="Dessert name"></v-text-field>
+                                                            <v-text-field v-model="name" label="Name"></v-text-field>
                                                         </v-col>
                                                         <v-col cols="12" sm="6" md="4">
-                                                            <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
-                                                        </v-col>
-                                                        <v-col cols="12" sm="6" md="4">
-                                                            <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
-                                                        </v-col>
-                                                        <v-col cols="12" sm="6" md="4">
-                                                            <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
-                                                        </v-col>
-                                                        <v-col cols="12" sm="6" md="4">
-                                                            <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
+                                                            <v-text-field v-model="description" label="Description"></v-text-field>
                                                         </v-col>
                                                     </v-row>
                                                 </v-container>
@@ -59,20 +43,45 @@
                              </v-dialog>
                     </v-toolbar>
                 </template>
-                <template v-slot:item.action="{ item }">
-                    <v-icon
-                        small
+                <v-data-table
+                :headers="headers"
+                :items="categories"
+                sort-by="calories"
+                class="elevation-1"
+                :search="search"
+                >
+
+                <template v-slot:item="{ item }">   
+                    <tr>
+                    <td class="layout px-5">
+                        <v-icon            
                         class="mr-2"
                         @click="editItem(item)"
-                    >
-                         edit
-                    </v-icon>
-                     <v-icon
-                        small
+                        >
+                        edit
+                        </v-icon>
+                        <v-icon
                         @click="deleteItem(item)"
-                    >
+                        >
                         delete
-                    </v-icon>
+                        </v-icon>
+                    </td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.description }}</td>
+                    <td>
+                        <v-chip :color="getColor(item.condition)" dark>
+                            <div v-if="item.condition">
+                            <span class="black--text">Activo</span>
+                        </div>
+                        <div v-else>
+                            <span class="red--text">Inactivo</span>
+                        </div>
+                        </v-chip> 
+                        
+                    </td>  
+                    </tr>
+                                                  
+                        
                 </template>
                     <template v-slot:no-data>
                         <v-btn color="primary" @click="initialize">Reset</v-btn>
@@ -84,23 +93,18 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
     data(){
     return {
-
+                categories:[],
                 dialog: false,
                  headers: [
-                    {
-                        text: 'Dessert (100g serving)',
-                        align: 'left',
-                        sortable: false,
-                        value: 'name',
-                    },
-                    { text: 'Calories', value: 'calories' },
-                    { text: 'Fat (g)', value: 'fat' },
-                    { text: 'Carbs (g)', value: 'carbs' },
-                    { text: 'Protein (g)', value: 'protein' },
                     { text: 'Actions', value: 'action', sortable: false },
+                    { text: 'Name', value: 'name' },
+                    { text: 'Description', value: 'description', sortable:false },
+                    { text: 'Estatus', value: 'condition', sortable:false },
+                    
                         ],
                         search:'',
                         desserts: [],
@@ -137,9 +141,23 @@ export default {
 
         created () {
         this.initialize()
+        this.list()
         },
     methods:{
-            initialize () {
+             getColor (calories) {
+                 if (calories =true) return 'red'
+                     else return 'orange'
+                  
+                },
+            list(){
+                let me= this;
+                axios.get('api/Categories/List').then(function(response){
+                    me.categories= response.data
+                }).catch(function(error){
+                        console.log(error)
+                });
+            },
+            initialize () {               
                     this.desserts = [
                     {
                         name: 'Frozen Yogurt',
