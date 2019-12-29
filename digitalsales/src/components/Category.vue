@@ -296,10 +296,36 @@ export default {
                   
                 },
                 ActivarCategory(){
-
+                                let me = this; 
+                                var postHeaders = {
+                                'Content-Type': 'application/json',
+                                 };
+                            axios.put('api/Categories/ActivateCategory/'+this.adIdCategory,{headers:postHeaders})
+                            .then(function(response){
+                                me.adModal=0;
+                                me.adAction=0;
+                                me.adName="";
+                                me.adIdCategory=""
+                                me.list();
+                            }).catch(function(error){
+                                console.log(error);
+                            });
                 },
                 DesactivarCategory(){
-                    
+                                let me = this; 
+                                var postHeaders = {
+                                'Content-Type': 'application/json',
+                                 };
+                            axios.put('api/Categories/DeactivateCategory/'+this.adIdCategory,{headers:postHeaders})
+                            .then(function(response){
+                                me.adModal=0;
+                                me.adAction=0;
+                                me.adName="";
+                                me.adIdCategory=""
+                                me.list();
+                            }).catch(function(error){
+                                console.log(error);
+                            });
                 }
                 
 
