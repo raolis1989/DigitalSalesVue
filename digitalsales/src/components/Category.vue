@@ -58,19 +58,19 @@
                                  <v-card-title class="headline" v-if="adAction==2">Deactivate Item?</v-card-title>
                                  <v-card-text>
                                      Estas a punto de 
-                                     <span v-if="addAction==1">Activar</span>
-                                     <span v-if="addAction==2">Desactivar</span>
+                                     <span v-if="adAction==1">Activar</span>
+                                     <span v-if="adAction==2">Desactivar</span>
                                      el item {{adName}}
                                  </v-card-text>
                                  <v-card-actions>
                                      <v-spacer></v-spacer>
-                                     <v-btn color="green darken-1" flat="flat" @click="ActivateDeactivateClose">
+                                     <v-btn color="green darken-1" text="text" @click="ActivateDeactivateClose">
                                          Cancel
                                      </v-btn>
-                                     <v-btn  v-if="adAction==1" color="orange darken-4" flat="flat" @click="ActivarCategory">
+                                     <v-btn  v-if="adAction==1" color="orange darken-4" text="text" @click="ActivarCategory">
                                          Activate
                                      </v-btn>
-                                     <v-btn  v-if="adAction==2" color="orange darken-4" flat="flat" @click="DesactivarCategory">
+                                     <v-btn  v-if="adAction==2" color="orange darken-4" text="text" @click="DesactivarCategory">
                                          Deactivate
                                      </v-btn>
                                  </v-card-actions>
@@ -129,7 +129,7 @@
                         
                 </template>
                     <template v-slot:no-data>
-                        <v-btn color="primary">Reset</v-btn>
+                        <v-btn color="primary" @click="list">Reset</v-btn>
                     </template>
             </v-data-table>
 
