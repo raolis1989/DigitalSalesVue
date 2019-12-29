@@ -1,7 +1,7 @@
 <template>
    <v-layout alig-start>
         <v-flex>  
-            <template v-slot:top>
+        
                 <v-toolbar flat color="white">
                     <v-toolbar-title>Categories</v-toolbar-title>
                         <v-divider
@@ -14,7 +14,7 @@
                             <v-spacer></v-spacer>
                             <v-dialog v-model="dialog" max-width="500px">
                                 <template v-slot:activator="{ on }">
-                                    <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>
+                                    <v-btn color="primary" dark class="mb-2" v-on="on">New</v-btn>
                                  </template>
                                     <v-card>
                                         <v-card-title>
@@ -30,6 +30,9 @@
                                                         <v-col cols="12" sm="6" md="4">
                                                             <v-text-field v-model="description" label="Description"></v-text-field>
                                                         </v-col>
+                                                        <v-col cols="12" sm="12" md="12" v-show="validation">
+                                                            <div class="red--text" v-for="v in validationMessage" :key="v" v-text="v"></div>
+                                                        </v-col>
                                                     </v-row>
                                                 </v-container>
                                              </v-card-text>
@@ -42,7 +45,7 @@
                                     </v-card>
                              </v-dialog>
                     </v-toolbar>
-                </template>
+             
                 <v-data-table
                 :headers="headers"
                 :items="categories"
@@ -60,11 +63,21 @@
                         >
                         edit
                         </v-icon>
-                        <v-icon
-                        @click="deleteItem(item)"
-                        >
-                        delete
-                        </v-icon>
+                        <template v-if="item.condition">
+                            <v-icon
+                            @click="ActivateDeactivateView(2,item)"
+                            >
+                                block
+                            </v-icon>
+                        </template>
+                        <template v-else>
+                            <v-icon
+                            @click="ActivateDeactivateView(1,item)"
+                            >
+                                check
+                            </v-icon>
+                        </template>
+                        
                     </td>
                     <td>{{ item.name }}</td>
                     <td>{{ item.description }}</td>
@@ -84,7 +97,7 @@
                         
                 </template>
                     <template v-slot:no-data>
-                        <v-btn color="primary" @click="initialize">Reset</v-btn>
+                        <v-btn color="primary">Reset</v-btn>
                     </template>
             </v-data-table>
 
@@ -106,30 +119,19 @@ export default {
                     { text: 'Estatus', value: 'condition', sortable:false },
                     
                         ],
-                        search:'',
-                        desserts: [],
+                        search:'',              
                         editedIndex: -1,
-                        editedItem: {
-                            name: '',
-                            calories: 0,
-                            fat: 0,
-                            carbs: 0,
-                            protein: 0,
-                                    },
-                defaultItem: {
-                        name: '',
-                        calories: 0,
-                        fat: 0,
-                        carbs: 0,
-                        protein: 0,
-                            }
-
+                         id:'',
+                         name:'',
+                         description:'',
+                         validation:'',
+                         validationMessage:[]
             }
 
     },
         computed: {
         formTitle () {
-            return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+            return this.editedIndex === -1 ? 'New Category' : 'Edit Category'
         },
         },
 
@@ -140,7 +142,7 @@ export default {
         },
 
         created () {
-        this.initialize()
+
         this.list()
         },
     methods:{
@@ -157,85 +159,15 @@ export default {
                         console.log(error)
                 });
             },
-            initialize () {               
-                    this.desserts = [
-                    {
-                        name: 'Frozen Yogurt',
-                        calories: 159,
-                        fat: 6.0,
-                        carbs: 24,
-                        protein: 4.0,
-                    },
-                    {
-                        name: 'Ice cream sandwich',
-                        calories: 237,
-                        fat: 9.0,
-                        carbs: 37,
-                        protein: 4.3,
-                    },
-                    {
-                        name: 'Eclair',
-                        calories: 262,
-                        fat: 16.0,
-                        carbs: 23,
-                        protein: 6.0,
-                    },
-                    {
-                        name: 'Cupcake',
-                        calories: 305,
-                        fat: 3.7,
-                        carbs: 67,
-                        protein: 4.3,
-                    },
-                    {
-                        name: 'Gingerbread',
-                        calories: 356,
-                        fat: 16.0,
-                        carbs: 49,
-                        protein: 3.9,
-                    },
-                    {
-                        name: 'Jelly bean',
-                        calories: 375,
-                        fat: 0.0,
-                        carbs: 94,
-                        protein: 0.0,
-                    },
-                    {
-                        name: 'Lollipop',
-                        calories: 392,
-                        fat: 0.2,
-                        carbs: 98,
-                        protein: 0,
-                    },
-                    {
-                        name: 'Honeycomb',
-                        calories: 408,
-                        fat: 3.2,
-                        carbs: 87,
-                        protein: 6.5,
-                    },
-                    {
-                        name: 'Donut',
-                        calories: 452,
-                        fat: 25.0,
-                        carbs: 51,
-                        protein: 4.9,
-                    },
-                    {
-                        name: 'KitKat',
-                        calories: 518,
-                        fat: 26.0,
-                        carbs: 65,
-                        protein: 7,
-                    },
-                    ]
-                },
+
 
                 editItem (item) {
-                    this.editedIndex = this.desserts.indexOf(item)
-                    this.editedItem = Object.assign({}, item)
-                    this.dialog = true
+                    console.log(item.idCategory);
+                   this.id=item.idCategory;
+                    this.name= item.name;
+                    this.description= item.description; 
+                    this.editedIndex=1;
+                    this.dialog=true;
                 },
 
                 deleteItem (item) {
@@ -245,20 +177,86 @@ export default {
 
                 close () {
                     this.dialog = false
-                    setTimeout(() => {
-                    this.editedItem = Object.assign({}, this.defaultItem)
-                    this.editedIndex = -1
-                    }, 300)
+                    this.clear();
                 },
+                clear(){
+                    this.id="";
+                    this.name="";
+                    this.description="";
+                    this.editedIndex=-1;
+                },
+                  force(){
+                    this.validation=0;
+                    this.validationMessage=[];
+                    if(this.name.length<'3' || this.name.length>'50'){
+                        this.validationMessage.push("El nombre debe tener mas de 3 caracteres y menos de 50 caractares");
 
-                save () {
-                    if (this.editedIndex > -1) {
-                    Object.assign(this.desserts[this.editedIndex], this.editedItem)
-                    } else {
-                    this.desserts.push(this.editedItem)
                     }
-                    this.close()
+                    if(this.validationMessage.length){
+                        this.validation=1;
+                    }
+                    return  this.validation;
                 },
+                save () {
+                    if(this.force()){
+                        return;
+                    }
+                    if (this.editedIndex > -1) {
+                            //code for edit
+                            let me = this; 
+                            this.StructureData = {
+                                            IdCategory: me.id,
+                                            Name: me.name,
+                                            Description: me.description 
+                            };
+                             var postHeaders = {
+                                'Content-Type': 'application/json',
+                            };
+                            axios.put('api/Categories/UpdateCategory', this.StructureData,{headers:postHeaders})
+                            .then(function(response){
+                                me.close();
+                                me.list();
+                                me.clear();
+                            }).catch(function(error){
+                                console.log(error);
+                            });
+                    } else {
+                       //code for add 
+                       let me = this; 
+                        this.StructureData = {
+                                Name: me.name,
+                                Description: me.description 
+                                            };
+                       var postHeaders = {
+                                'Content-Type': 'application/json',
+                                        };
+                       axios.post('api/Categories/AddCategory',this.StructureData,{
+                           headers: postHeaders
+                       } ).then(function(response){
+                            me.close();
+                            me.list()
+                            me.clear();
+                       }).catch(function(error){
+                            console.log(error);
+                       });
+                    }
+                  
+                },
+                ActivateDeactivateView(actionitem, item){
+                    if(actionitem==1){
+                        alert("Activate"+ item.name)
+                    }
+                    else if(actionitem==2){
+                        alert("Deactivate"+ item.name)
+                    }
+                    else 
+                    {
+                        
+                    }
+                  
+                }
+
+              
     }
 }
 </script>
