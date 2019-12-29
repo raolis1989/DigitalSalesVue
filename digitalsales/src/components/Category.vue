@@ -44,7 +44,36 @@
                                                 </v-card-actions>
                                     </v-card>
                              </v-dialog>
-                    </v-toolbar>
+                    
+                    
+                    
+                    
+                    
+                   
+                   
+                   
+                         <v-dialog v-model="adModal" max-width="290">
+                             <v-card>
+                                 <v-card-title class="headline" v-if="adAction==1">Activate Item?</v-card-title>
+                                 <v-card-title class="headline" v-if="adAction==2">Deactivate Item?</v-card-title>
+                                 <v-card-text>
+                                     Estas a punto de 
+                                     <span v-if="addAction==1">Activar</span>
+                                     <span v-if="addAction==2">Desactivar</span>
+                                     el item {{adName}}
+                                 </v-card-text>
+                                 <v-card-actions>
+                                     <v-spacer></v-spacer>
+                                     <v-btn color="green darken-1" flat="flat">
+                                         Cancel
+                                     </v-btn>
+                                     <v-btn color="orange darken-4" flat="flat">
+                                         Accept
+                                     </v-btn>
+                                 </v-card-actions>
+                             </v-card>
+                        </v-dialog> 
+                       </v-toolbar>
              
                 <v-data-table
                 :headers="headers"
@@ -125,7 +154,11 @@ export default {
                          name:'',
                          description:'',
                          validation:'',
-                         validationMessage:[]
+                         validationMessage:[],
+                         adModal:0,
+                         adAction:0,
+                         adName:'',
+                         adIdCategory:''
             }
 
     },
@@ -243,18 +276,33 @@ export default {
                   
                 },
                 ActivateDeactivateView(actionitem, item){
+                    this.adModal=1;
+                    this.adName= item.name;
+                    this.adIdCategory= item.idCategory;
+
+
+
+
                     if(actionitem==1){
-                        alert("Activate"+ item.name)
+                        this.adAction=1;
                     }
                     else if(actionitem==2){
-                        alert("Deactivate"+ item.name)
+                      this.adAction=2;
                     }
                     else 
                     {
-                        
+                        this.adModal=0;
                     }
                   
+                },
+                ActivarCategory(){
+
+                },
+                DesactivarCategory(){
+                    
                 }
+                
+
 
               
     }
