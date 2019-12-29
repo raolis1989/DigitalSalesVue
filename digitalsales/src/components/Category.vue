@@ -64,11 +64,14 @@
                                  </v-card-text>
                                  <v-card-actions>
                                      <v-spacer></v-spacer>
-                                     <v-btn color="green darken-1" flat="flat">
+                                     <v-btn color="green darken-1" flat="flat" @click="ActivateDeactivateClose">
                                          Cancel
                                      </v-btn>
-                                     <v-btn color="orange darken-4" flat="flat">
-                                         Accept
+                                     <v-btn  v-if="adAction==1" color="orange darken-4" flat="flat" @click="ActivarCategory">
+                                         Activate
+                                     </v-btn>
+                                     <v-btn  v-if="adAction==2" color="orange darken-4" flat="flat" @click="DesactivarCategory">
+                                         Deactivate
                                      </v-btn>
                                  </v-card-actions>
                              </v-card>
@@ -326,6 +329,9 @@ export default {
                             }).catch(function(error){
                                 console.log(error);
                             });
+                },
+                ActivateDeactivateClose(){
+                    this.adModal=0;
                 }
                 
 
