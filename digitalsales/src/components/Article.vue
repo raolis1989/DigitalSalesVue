@@ -25,7 +25,21 @@
                                                 <v-container>
                                                     <v-row>
                                                         <v-col cols="12" sm="6" md="4">
+                                                            <v-text-field v-model="code" label="Code"></v-text-field>
+                                                        </v-col>
+                                                        <v-col cols="12" sm="6" md="4">
+                                                           <v-select v-model="idCategory"
+                                                             :items="categories" label="Category">
+                                                             </v-select>
+                                                        </v-col>
+                                                        <v-col cols="12" sm="6" md="4">
                                                             <v-text-field v-model="name" label="Name"></v-text-field>
+                                                        </v-col>
+                                                         <v-col cols="12" sm="6" md="4">
+                                                            <v-text-field v-model="stock" type="number" label="Stock"></v-text-field>
+                                                        </v-col>
+                                                         <v-col cols="12" sm="6" md="4">
+                                                            <v-text-field v-model="price_sale" type="number" label="Price Sale"></v-text-field>
                                                         </v-col>
                                                         <v-col cols="12" sm="6" md="4">
                                                             <v-text-field v-model="description" label="Description"></v-text-field>
@@ -162,8 +176,8 @@ export default {
                         search:'',              
                         editedIndex: -1,
                          id:'',
-                         idCategpry:'',
-                         category:[
+                         idCategory:'',
+                         categories:[
                              {text:'Category 1',  value:1},
                              {text:'Category 2', value:2}
                          ],
