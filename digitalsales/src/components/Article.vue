@@ -167,7 +167,10 @@ export default {
                              {text:'Category 1',  value:1},
                              {text:'Category 2', value:2}
                          ],
+                         code:0,
                          name:'',
+                         stock:0,
+                         price_sale:0,
                          description:'',
                          validation:'',
                          validationMessage:[],
@@ -180,7 +183,7 @@ export default {
     },
         computed: {
         formTitle () {
-            return this.editedIndex === -1 ? 'New Category' : 'Edit Category'
+            return this.editedIndex === -1 ? 'New Article' : 'Edit Article'
         },
         },
 
