@@ -80,7 +80,7 @@
              
                 <v-data-table
                 :headers="headers"
-                :items="categories"
+                :items="articles"
                 sort-by="calories"
                 class="elevation-1"
                 :search="search"
@@ -111,7 +111,11 @@
                         </template>
                         
                     </td>
+                     <td>{{ item.code }}</td>
                     <td>{{ item.name }}</td>
+                    <td>{{ item.categoryName }}</td>
+                    <td>{{ item.stock }}</td>
+                    <td>{{ item.price_Sale }}</td>
                     <td>{{ item.description }}</td>
                     <td>
                         <v-chip :color="getColor(item.condition)" dark>
@@ -142,11 +146,15 @@ import axios from 'axios'
 export default {
     data(){
     return {
-                categories:[],
+                articles:[],
                 dialog: false,
                  headers: [
                     { text: 'Actions', value: 'action', sortable: false },
+                    { text: 'Code', value: 'code', sortable: false },
                     { text: 'Name', value: 'name' },
+                    { text: 'Category', value: 'category' },
+                    { text: 'Stock', value: 'stock', sortable:false },
+                    { text: 'Price Sale', value: 'price_Sale', sortable:false },
                     { text: 'Description', value: 'description', sortable:false },
                     { text: 'Estatus', value: 'condition', sortable:false },
                     
@@ -154,6 +162,11 @@ export default {
                         search:'',              
                         editedIndex: -1,
                          id:'',
+                         idCategpry:'',
+                         category:[
+                             {text:'Category 1',  value:1},
+                             {text:'Category 2', value:2}
+                         ],
                          name:'',
                          description:'',
                          validation:'',
@@ -189,8 +202,8 @@ export default {
                 },
             list(){
                 let me= this;
-                axios.get('api/Categories/List').then(function(response){
-                    me.categories= response.data
+                axios.get('api/Articles/List').then(function(response){
+                    me.articles= response.data
                 }).catch(function(error){
                         console.log(error)
                 });
