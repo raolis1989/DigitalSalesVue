@@ -177,10 +177,7 @@ export default {
                         editedIndex: -1,
                          id:'',
                          idCategory:'',
-                         categories:[
-                             {text:'Category 1',  value:1},
-                             {text:'Category 2', value:2}
-                         ],
+                         categories:[],
                          code:0,
                          name:'',
                          stock:0,
@@ -209,7 +206,8 @@ export default {
 
         created () {
 
-        this.list()
+        this.list();
+        this.selectCategories();
         },
     methods:{
              getColor (calories) {
@@ -225,7 +223,18 @@ export default {
                         console.log(error)
                 });
             },
-
+            selectCategories(){
+                let me= this;
+                var categoriesArray=[];
+                axios.get('api/Articles/SelectActive').then(function(response){
+                    categoriesArray= response.data;
+                    categoriesArray.map(function(x){
+                        me.categories.push({text: x.name, value: x.idCategory})
+                    });
+                }).catch(function(error){
+                        console.log(error)
+                });
+            },
 
                 editItem (item) {
                     console.log(item.idCategory);
