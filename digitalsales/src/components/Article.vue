@@ -226,7 +226,7 @@ export default {
             selectCategories(){
                 let me= this;
                 var categoriesArray=[];
-                axios.get('api/Articles/SelectActive').then(function(response){
+                axios.get('api/Categories/SelectActive').then(function(response){
                     categoriesArray= response.data;
                     categoriesArray.map(function(x){
                         me.categories.push({text: x.name, value: x.idCategory})
@@ -237,9 +237,13 @@ export default {
             },
 
                 editItem (item) {
-                    console.log(item.idCategory);
-                   this.id=item.idCategory;
+                   
+                    this.id=item.IdArticle;
+                    this.idCategory=item.IdCategory;
+                    this.code= item.Code;
                     this.name= item.name;
+                    this.stock= item.Stock;
+                    this.price_sale= item.price_Sale;
                     this.description= item.description; 
                     this.editedIndex=1;
                     this.dialog=true;
@@ -256,7 +260,10 @@ export default {
                 },
                 clear(){
                     this.id="";
+                    this.idCategory="";
                     this.name="";
+                    this.stock="";
+                    this.price_sale="";
                     this.description="";
                     this.editedIndex=-1;
                 },
@@ -265,6 +272,17 @@ export default {
                     this.validationMessage=[];
                     if(this.name.length<'3' || this.name.length>'50'){
                         this.validationMessage.push("El nombre debe tener mas de 3 caracteres y menos de 50 caractares");
+
+                    }
+                    if(!this.idCategory){
+                        this.validationMessage.push("Seleccione una categoria")
+                    }
+                    if(!this.stock || this.stock==0)
+                    {
+                        this.validationMessage.push("Ingrese el precio de venta  del articulo");
+                    }
+                    if(!this.price_sale || this.price_sale==0)
+                    {
 
                     }
                     if(this.validationMessage.length){
@@ -280,14 +298,18 @@ export default {
                             //code for edit
                             let me = this; 
                             this.StructureData = {
-                                            IdCategory: me.id,
+                                            IdArticle: me.Id,
+                                            IdCategory: me.idCategory,
+                                            Code:me.code,
                                             Name: me.name,
+                                            Stock: me.stock,
+                                            Price_Sale: me.price_sale,
                                             Description: me.description 
                             };
                              var postHeaders = {
                                 'Content-Type': 'application/json',
                             };
-                            axios.put('api/Categories/UpdateCategory', this.StructureData,{headers:postHeaders})
+                            axios.put('api/Articles/UpdateArticle', this.StructureData,{headers:postHeaders})
                             .then(function(response){
                                 me.close();
                                 me.list();
@@ -299,13 +321,17 @@ export default {
                        //code for add 
                        let me = this; 
                         this.StructureData = {
-                                Name: me.name,
-                                Description: me.description 
-                                            };
+                                            IdCategory: me.idCategory,
+                                            Code:me.code,
+                                            Name: me.name,
+                                            Stock:parseInt(me.stock),
+                                            Price_Sale: parseFloat(me.price_sale),
+                                            Description: me.description 
+                            };
                        var postHeaders = {
                                 'Content-Type': 'application/json',
                                         };
-                       axios.post('api/Categories/AddCategory',this.StructureData,{
+                       axios.post('api/Articles/AddArticle',this.StructureData,{
                            headers: postHeaders
                        } ).then(function(response){
                             me.close();
