@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Category from '../components/Category.vue'
 import Article from '../components/Article.vue'
+import Role from '../components/Role.vue'
 
 Vue.use(VueRouter)
 
@@ -21,7 +22,13 @@ const routes = [
     path:'articles',
     name:'articles',
     component: Article
+  },
+  {
+    path:'roles',
+    name:'roles',
+    component: Role
   }
+
 ]
 
 const router = new VueRouter({
