@@ -81,10 +81,10 @@
                                      <v-btn color="green darken-1" text="text" @click="ActivateDeactivateClose">
                                          Cancel
                                      </v-btn>
-                                     <v-btn  v-if="adAction==1" color="orange darken-4" text="text" @click="ActivarCategory">
+                                     <v-btn  v-if="adAction==1" color="orange darken-4" text="text" @click="ActivarArticulo">
                                          Activate
                                      </v-btn>
-                                     <v-btn  v-if="adAction==2" color="orange darken-4" text="text" @click="DesactivarCategory">
+                                     <v-btn  v-if="adAction==2" color="orange darken-4" text="text" @click="DesactivarArticulo">
                                          Deactivate
                                      </v-btn>
                                  </v-card-actions>
@@ -188,7 +188,7 @@ export default {
                          adModal:0,
                          adAction:0,
                          adName:'',
-                         adIdCategory:''
+                         adIdArticle:''
             }
 
     },
@@ -237,12 +237,11 @@ export default {
             },
 
                 editItem (item) {
-                   
-                    this.id=item.IdArticle;
-                    this.idCategory=item.IdCategory;
-                    this.code= item.Code;
+                    this.id=item.idArticle;
+                    this.idCategory=item.idCategory;
+                    this.code= item.code;
                     this.name= item.name;
-                    this.stock= item.Stock;
+                    this.stock= item.stock;
                     this.price_sale= item.price_Sale;
                     this.description= item.description; 
                     this.editedIndex=1;
@@ -298,12 +297,12 @@ export default {
                             //code for edit
                             let me = this; 
                             this.StructureData = {
-                                            IdArticle: me.Id,
+                                            IdArticle: me.id,
                                             IdCategory: me.idCategory,
                                             Code:me.code,
                                             Name: me.name,
-                                            Stock: me.stock,
-                                            Price_Sale: me.price_sale,
+                                            Stock:parseInt(me.stock),
+                                            Price_Sale: parseFloat(me.price_sale),
                                             Description: me.description 
                             };
                              var postHeaders = {
@@ -346,7 +345,7 @@ export default {
                 ActivateDeactivateView(actionitem, item){
                     this.adModal=1;
                     this.adName= item.name;
-                    this.adIdCategory= item.idCategory;
+                    this.adIdArticle= item.idArticle;
 
 
 
@@ -363,12 +362,12 @@ export default {
                     }
                   
                 },
-                ActivarCategory(){
+                ActivarArticulo(){
                                 let me = this; 
                                 var postHeaders = {
                                 'Content-Type': 'application/json',
                                  };
-                            axios.put('api/Categories/ActivateCategory/'+this.adIdCategory,{headers:postHeaders})
+                            axios.put('api/Articles/ActivateArticle/'+this.adIdArticle,{headers:postHeaders})
                             .then(function(response){
                                 me.adModal=0;
                                 me.adAction=0;
@@ -379,12 +378,12 @@ export default {
                                 console.log(error);
                             });
                 },
-                DesactivarCategory(){
+                DesactivarArticulo(){
                                 let me = this; 
                                 var postHeaders = {
                                 'Content-Type': 'application/json',
                                  };
-                            axios.put('api/Categories/DeactivateCategory/'+this.adIdCategory,{headers:postHeaders})
+                            axios.put('api/Articles/DeactivateArticle/'+this.adIdArticle,{headers:postHeaders})
                             .then(function(response){
                                 me.adModal=0;
                                 me.adAction=0;
