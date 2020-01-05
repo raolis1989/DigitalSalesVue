@@ -58,7 +58,6 @@ export default {
                 roles:[],
                 dialog: false,
                  headers: [
-                    { text: 'Actions', value: 'action', sortable: false },
                     { text: 'Name', value: 'name' },
                     { text: 'Description', value: 'description', sortable:false },
                     { text: 'Estatus', value: 'condition', sortable:false },
