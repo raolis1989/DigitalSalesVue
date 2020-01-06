@@ -29,7 +29,7 @@
                                                         </v-col>
                                                         <v-col cols="12" sm="6" md="4">
                                                            <v-select v-model="idRole"
-                                                             :items="roles" label="Category">
+                                                             :items="roles" label="Role">
                                                              </v-select>
                                                         </v-col>
                                                         <v-col cols="12" sm="6" md="4">
@@ -44,10 +44,13 @@
                                                             <v-text-field v-model="address" label="Address"></v-text-field>
                                                         </v-col>
                                                          <v-col cols="12" sm="6" md="4">
-                                                            <v-text-field v-model="price_sale" type="number" label="Price Sale"></v-text-field>
+                                                            <v-text-field v-model="email"  label="Email"></v-text-field>
                                                         </v-col>
                                                         <v-col cols="12" sm="6" md="4">
-                                                            <v-text-field v-model="description" label="Description"></v-text-field>
+                                                            <v-text-field v-model="phone" label="Phone"></v-text-field>
+                                                        </v-col>
+                                                        <v-col cols="12" sm="6" md="4">
+                                                            <v-text-field v-model="password" type="password" label="Password"></v-text-field>
                                                         </v-col>
                                                         <v-col cols="12" sm="12" md="12" v-show="validation">
                                                             <div class="red--text" v-for="v in validationMessage" :key="v" v-text="v"></div>
@@ -205,7 +208,7 @@ export default {
     },
         computed: {
         formTitle () {
-            return this.editedIndex === -1 ? 'New Article' : 'Edit Article'
+            return this.editedIndex === -1 ? 'New User' : 'Edit User'
         },
         },
 
@@ -236,11 +239,11 @@ export default {
             },
             selectCategories(){
                 let me= this;
-                var categoriesArray=[];
-                axios.get('api/Categories/SelectActive').then(function(response){
-                    categoriesArray= response.data;
-                    categoriesArray.map(function(x){
-                        me.categories.push({text: x.name, value: x.idCategory})
+                var rolesArray=[];
+                axios.get('api/Roles/SelectActive').then(function(response){
+                    rolesArray= response.data;
+                    rolesArray.map(function(x){
+                        me.roles.push({text: x.name, value: x.idRole})
                     });
                 }).catch(function(error){
                         console.log(error)
@@ -248,13 +251,14 @@ export default {
             },
 
                 editItem (item) {
-                    this.id=item.idArticle;
-                    this.idCategory=item.idCategory;
-                    this.code= item.code;
+                    this.id=item.idUser;
+                    this.idRole=item.idRole;
                     this.name= item.name;
-                    this.stock= item.stock;
-                    this.price_sale= item.price_Sale;
-                    this.description= item.description; 
+                    this.type_document = item.type_document;
+                    this.num_document= item.num_document;
+                    this.address = item.address;
+                    this.phone= item.phone; 
+                    this.email= item.email; 
                     this.editedIndex=1;
                     this.dialog=true;
                 },
@@ -270,30 +274,36 @@ export default {
                 },
                 clear(){
                     this.id="";
-                    this.idCategory="";
+                    this.idRole="";
                     this.name="";
-                    this.stock="";
-                    this.price_sale="";
-                    this.description="";
+                    this.type_document="";
+                    this.num_document="";
+                    this.address="";
+                    this.phone="";
+                    this.email="";
+                    this.password="";
                     this.editedIndex=-1;
                 },
                   force(){
                     this.validation=0;
                     this.validationMessage=[];
-                    if(this.name.length<'3' || this.name.length>'50'){
+                    if(this.name.length<'3' || this.name.length>'100'){
                         this.validationMessage.push("El nombre debe tener mas de 3 caracteres y menos de 50 caractares");
 
                     }
-                    if(!this.idCategory){
-                        this.validationMessage.push("Seleccione una categoria")
+                    if(!this.idRole){
+                        this.validationMessage.push("Selecciones un rol.")
                     }
-                    if(!this.stock || this.stock==0)
-                    {
-                        this.validationMessage.push("Ingrese el precio de venta  del articulo");
+                    if(!this.type_document){
+                        this.validationMessage.push("Seleccione un tipo de documento");
                     }
-                    if(!this.price_sale || this.price_sale==0)
+                    if(!this.email)
                     {
 
+                        this.validationMessage.push("Ingrese el email del usuario");
+                    }
+                    if(!this.password){
+                        thos.validationMessage.push("Ingrese el password del usuario");
                     }
                     if(this.validationMessage.length){
                         this.validation=1;
@@ -308,13 +318,15 @@ export default {
                             //code for edit
                             let me = this; 
                             this.StructureData = {
-                                            IdArticle: me.id,
-                                            IdCategory: me.idCategory,
-                                            Code:me.code,
-                                            Name: me.name,
-                                            Stock:parseInt(me.stock),
-                                            Price_Sale: parseFloat(me.price_sale),
-                                            Description: me.description 
+                                            IdRole: me.idRole,
+                                            Name:me.name,
+                                            TypeDocument: me.type_document,
+                                            NumDocument:me.num_document,
+                                            Address: me.address,
+                                            Phone: me.phone,
+                                            Email: me.email,
+                                            Password:me.password
+
                             };
                              var postHeaders = {
                                 'Content-Type': 'application/json',
@@ -331,17 +343,20 @@ export default {
                        //code for add 
                        let me = this; 
                         this.StructureData = {
-                                            IdCategory: me.idCategory,
-                                            Code:me.code,
-                                            Name: me.name,
-                                            Stock:parseInt(me.stock),
-                                            Price_Sale: parseFloat(me.price_sale),
-                                            Description: me.description 
+                                            IdRole: me.idRole,
+                                            Name:me.name,
+                                            TypeDocument: me.type_document,
+                                            NumDocument:me.num_document,
+                                            Address: me.address,
+                                            Phone: me.phone,
+                                            Email: me.email,
+                                            Password:me.password
+
                             };
                        var postHeaders = {
                                 'Content-Type': 'application/json',
                                         };
-                       axios.post('api/Articles/AddArticle',this.StructureData,{
+                       axios.post('api/Users/AddUser',this.StructureData,{
                            headers: postHeaders
                        } ).then(function(response){
                             me.close();
