@@ -197,13 +197,14 @@ export default {
                          name:'',
                          password:'',
                          actPassword:false,
+                         actionEdit:false,
                          passwordAnt:'',
                          validation:'',
                          validationMessage:[],
                          adModal:0,
                          adAction:0,
                          adName:'',
-                         adIdArticle:''
+                         adIdUser:''
             }
 
     },
@@ -262,6 +263,7 @@ export default {
                     this.email= item.email; 
                     this.editedIndex=1;
                     this.dialog=true;
+                    this.actionEdit=true;
                 },
 
                 deleteItem (item) {
@@ -305,9 +307,13 @@ export default {
 
                         this.validationMessage.push("Ingrese el email del usuario");
                     }
+                    if(!this.actionEdit)
+                    {
                     if(!this.password){
-                        thos.validationMessage.push("Ingrese el password del usuario");
+                        this.validationMessage.push("Ingrese el password del usuario");
                     }
+                    }
+                    
                     if(this.validationMessage.length){
                         this.validation=1;
                     }
@@ -324,9 +330,9 @@ export default {
                             {
                                  me.actPassword=true;
                             }
-                            
+
                             this.StructureData = {
-                                            IdUSer:me.idUser,
+                                            IdUSer:me.id,
                                             IdRole: me.idRole,
                                             Name:me.name,
                                             TypeDocument: me.type_document,
@@ -335,13 +341,13 @@ export default {
                                             Phone: me.phone,
                                             Email: me.email,
                                             Password:me.password,
-                                            actPassword : me.actPassword
+                                            ActPassword : me.actPassword
 
                             };
                              var postHeaders = {
                                 'Content-Type': 'application/json',
                             };
-                            axios.put('api/User/UpdateUser', this.StructureData,{headers:postHeaders})
+                            axios.put('api/Users/UpdateUser', this.StructureData,{headers:postHeaders})
                             .then(function(response){
                                 me.close();
                                 me.list();
@@ -382,7 +388,7 @@ export default {
                 ActivateDeactivateView(actionitem, item){
                     this.adModal=1;
                     this.adName= item.name;
-                    this.adIdArticle= item.idArticle;
+                    this.adIdUser= item.idRole;
 
 
 
@@ -404,12 +410,12 @@ export default {
                                 var postHeaders = {
                                 'Content-Type': 'application/json',
                                  };
-                            axios.put('api/Articles/ActivateArticle/'+this.adIdArticle,{headers:postHeaders})
+                            axios.put('api/Users/ActivateUser/'+this.adIdUser,{headers:postHeaders})
                             .then(function(response){
                                 me.adModal=0;
                                 me.adAction=0;
                                 me.adName="";
-                                me.adIdCategory=""
+                                me.adIdUser=""
                                 me.list();
                             }).catch(function(error){
                                 console.log(error);
@@ -420,12 +426,12 @@ export default {
                                 var postHeaders = {
                                 'Content-Type': 'application/json',
                                  };
-                            axios.put('api/Articles/DeactivateArticle/'+this.adIdArticle,{headers:postHeaders})
+                            axios.put('api/Users/DeactivateUser/'+this.adIdUser,{headers:postHeaders})
                             .then(function(response){
                                 me.adModal=0;
                                 me.adAction=0;
                                 me.adName="";
-                                me.adIdCategory=""
+                                me.adIdUser=""
                                 me.list();
                             }).catch(function(error){
                                 console.log(error);
