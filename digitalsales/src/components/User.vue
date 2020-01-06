@@ -196,7 +196,8 @@ export default {
                          phone:'',
                          name:'',
                          password:'',
-                         act_password:false,
+                         actPassword:false,
+                         passwordAnt:'',
                          validation:'',
                          validationMessage:[],
                          adModal:0,
@@ -254,8 +255,8 @@ export default {
                     this.id=item.idUser;
                     this.idRole=item.idRole;
                     this.name= item.name;
-                    this.type_document = item.type_document;
-                    this.num_document= item.num_document;
+                    this.type_document = item.type_Document;
+                    this.num_document= item.num_Document;
                     this.address = item.address;
                     this.phone= item.phone; 
                     this.email= item.email; 
@@ -282,6 +283,8 @@ export default {
                     this.phone="";
                     this.email="";
                     this.password="";
+                    this.passwordAnt="";
+                    this.actPassword="";
                     this.editedIndex=-1;
                 },
                   force(){
@@ -317,7 +320,13 @@ export default {
                     if (this.editedIndex > -1) {
                             //code for edit
                             let me = this; 
+                            if(me.password.length>0)
+                            {
+                                 me.actPassword=true;
+                            }
+                            
                             this.StructureData = {
+                                            IdUSer:me.idUser,
                                             IdRole: me.idRole,
                                             Name:me.name,
                                             TypeDocument: me.type_document,
@@ -325,13 +334,14 @@ export default {
                                             Address: me.address,
                                             Phone: me.phone,
                                             Email: me.email,
-                                            Password:me.password
+                                            Password:me.password,
+                                            actPassword : me.actPassword
 
                             };
                              var postHeaders = {
                                 'Content-Type': 'application/json',
                             };
-                            axios.put('api/Articles/UpdateArticle', this.StructureData,{headers:postHeaders})
+                            axios.put('api/User/UpdateUser', this.StructureData,{headers:postHeaders})
                             .then(function(response){
                                 me.close();
                                 me.list();
@@ -350,7 +360,8 @@ export default {
                                             Address: me.address,
                                             Phone: me.phone,
                                             Email: me.email,
-                                            Password:me.password
+                                            Password:me.password,
+                                            
 
                             };
                        var postHeaders = {
