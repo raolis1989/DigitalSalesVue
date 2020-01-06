@@ -25,18 +25,23 @@
                                                 <v-container>
                                                     <v-row>
                                                         <v-col cols="12" sm="6" md="4">
-                                                            <v-text-field v-model="code" label="Code"></v-text-field>
+                                                            <v-text-field v-model="name" label="Name"></v-text-field>
                                                         </v-col>
                                                         <v-col cols="12" sm="6" md="4">
-                                                           <v-select v-model="idCategory"
-                                                             :items="categories" label="Category">
+                                                           <v-select v-model="idRole"
+                                                             :items="roles" label="Category">
                                                              </v-select>
                                                         </v-col>
                                                         <v-col cols="12" sm="6" md="4">
-                                                            <v-text-field v-model="name" label="Name"></v-text-field>
+                                                           <v-select v-model="type_document"
+                                                             :items="documents" label="Type Documents">
+                                                             </v-select>
+                                                        </v-col>
+                                                        <v-col cols="12" sm="6" md="4">
+                                                            <v-text-field v-model="num_document" label="Number Document"></v-text-field>
                                                         </v-col>
                                                          <v-col cols="12" sm="6" md="4">
-                                                            <v-text-field v-model="stock" type="number" label="Stock"></v-text-field>
+                                                            <v-text-field v-model="address" label="Address"></v-text-field>
                                                         </v-col>
                                                          <v-col cols="12" sm="6" md="4">
                                                             <v-text-field v-model="price_sale" type="number" label="Price Sale"></v-text-field>
@@ -178,13 +183,17 @@ export default {
                         search:'',              
                         editedIndex: -1,
                          id:'',
-                         idCategory:'',
-                         categories:[],
-                         code:0,
+                         idRole:'',
+                         roles:[],
+                         type_document:'',
+                         documents:['RUT', 'DNI', 'PASAPORTE', 'CEDULA'],
+                         num_document:0,
+                         address:'',
+                         email:'',
+                         phone:'',
                          name:'',
-                         stock:0,
-                         price_sale:0,
-                         description:'',
+                         password:'',
+                         act_password:false,
                          validation:'',
                          validationMessage:[],
                          adModal:0,
