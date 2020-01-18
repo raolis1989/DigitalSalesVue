@@ -143,12 +143,12 @@ import axios from 'axios'
 export default {
     data(){
     return {
-                users:[],
+                clients:[],
                 dialog: false,
                  headers: [
                     { text: 'Actions', value: 'action', sortable: false },
                     { text: 'Name', value: 'name' },
-                    { text: 'Role', value: 'RoleName' },
+                    { text: 'Type Client', value: 'Type_Client' },
                     { text: 'Type Document', value: 'Type_Document' },
                     { text: 'Number Document', value: 'Num_Document', sortable:false },
                     { text: 'Address', value: 'Adress', sortable:false },
@@ -184,7 +184,7 @@ export default {
     },
         computed: {
         formTitle () {
-            return this.editedIndex === -1 ? 'New User' : 'Edit User'
+            return this.editedIndex === -1 ? 'New Client' : 'Edit User'
         },
         },
 
@@ -207,8 +207,8 @@ export default {
                 },
             list(){
                 let me= this;
-                axios.get('api/Users/List').then(function(response){
-                    me.users= response.data
+                axios.get('api/Persons/ListClients').then(function(response){
+                    me.clients= response.data
                 }).catch(function(error){
                         console.log(error)
                 });
