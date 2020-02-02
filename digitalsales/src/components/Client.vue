@@ -24,28 +24,25 @@
                                             <v-card-text>
                                                 <v-container>
                                                     <v-row>
-                                                        <v-col cols="12" sm="6" md="4">
+                                                        <v-col cols="12" sm="12" md="12">
                                                             <v-text-field v-model="name" label="Name"></v-text-field>
                                                         </v-col>
-                                                        <v-col cols="12" sm="6" md="4">
+                                                        <v-col cols="12" sm="6" md="6">
                                                            <v-select v-model="type_document"
                                                              :items="documents" label="Type Documents">
                                                              </v-select>
                                                         </v-col>
-                                                        <v-col cols="12" sm="6" md="4">
+                                                        <v-col cols="12" sm="6" md="6">
                                                             <v-text-field v-model="num_document" label="Number Document"></v-text-field>
                                                         </v-col>
-                                                         <v-col cols="12" sm="6" md="4">
+                                                         <v-col cols="12" sm="12" md="12">
                                                             <v-text-field v-model="address" label="Address"></v-text-field>
                                                         </v-col>
-                                                         <v-col cols="12" sm="6" md="4">
+                                                         <v-col cols="12" sm="6" md="6">
                                                             <v-text-field v-model="email"  label="Email"></v-text-field>
                                                         </v-col>
-                                                        <v-col cols="12" sm="6" md="4">
+                                                        <v-col cols="12" sm="6" md="6">
                                                             <v-text-field v-model="phone" label="Phone"></v-text-field>
-                                                        </v-col>
-                                                        <v-col cols="12" sm="6" md="4">
-                                                            <v-text-field v-model="password" type="password" label="Password"></v-text-field>
                                                         </v-col>
                                                         <v-col cols="12" sm="12" md="12" v-show="validation">
                                                             <div class="red--text" v-for="v in validationMessage" :key="v" v-text="v"></div>
@@ -61,30 +58,6 @@
                                                 </v-card-actions>
                                     </v-card>
                              </v-dialog>
-
-                             <v-card>
-                                 <v-card-title class="headline" v-if="adAction==1">Activate Item?</v-card-title>
-                                 <v-card-title class="headline" v-if="adAction==2">Deactivate Item?</v-card-title>
-                                 <v-card-text>
-                                     Estas a punto de 
-                                     <span v-if="adAction==1">Activar</span>
-                                     <span v-if="adAction==2">Desactivar</span>
-                                     el item {{adName}}
-                                 </v-card-text>
-                                 <v-card-actions>
-                                     <v-spacer></v-spacer>
-                                     <v-btn color="green darken-1" text="text" @click="ActivateDeactivateClose">
-                                         Cancel
-                                     </v-btn>
-                                     <v-btn  v-if="adAction==1" color="orange darken-4" text="text" @click="ActivarArticulo">
-                                         Activate
-                                     </v-btn>
-                                     <v-btn  v-if="adAction==2" color="orange darken-4" text="text" @click="DesactivarArticulo">
-                                         Deactivate
-                                     </v-btn>
-                                 </v-card-actions>
-                             </v-card>
-                        </v-dialog> 
                        </v-toolbar>
              
                 <v-data-table
@@ -241,23 +214,10 @@ export default {
                         this.validationMessage.push("El nombre debe tener mas de 3 caracteres y menos de 50 caractares");
 
                     }
-                    if(!this.idRole){
-                        this.validationMessage.push("Selecciones un rol.")
-                    }
                     if(!this.type_document){
                         this.validationMessage.push("Seleccione un tipo de documento");
                     }
-                    if(!this.email)
-                    {
-
-                        this.validationMessage.push("Ingrese el email del usuario");
-                    }
-                    if(!this.actionEdit)
-                    {
-                    if(!this.password){
-                        this.validationMessage.push("Ingrese el password del usuario");
-                    }
-                    }
+ 
                     
                     if(this.validationMessage.length){
                         this.validation=1;
@@ -271,28 +231,20 @@ export default {
                     if (this.editedIndex > -1) {
                             //code for edit
                             let me = this; 
-                            if(me.password.length>0)
-                            {
-                                 me.actPassword=true;
-                            }
-
                             this.StructureData = {
-                                            IdUSer:me.id,
-                                            IdRole: me.idRole,
+                                            IdPerson:me.id,
                                             Name:me.name,
-                                            TypeDocument: me.type_document,
-                                            NumDocument:me.num_document,
+                                            Type_person: 'Client',
+                                            Type_document: me.type_document,
+                                            Num_document:me.num_document,
                                             Address: me.address,
                                             Phone: me.phone,
-                                            Email: me.email,
-                                            Password:me.password,
-                                            ActPassword : me.actPassword
-
+                                            Email: me.email
                             };
                              var postHeaders = {
                                 'Content-Type': 'application/json',
                             };
-                            axios.put('api/Users/UpdateUser', this.StructureData,{headers:postHeaders})
+                            axios.put('api/Persons/UpdateClient', this.StructureData,{headers:postHeaders})
                             .then(function(response){
                                 me.close();
                                 me.list();
@@ -304,21 +256,18 @@ export default {
                        //code for add 
                        let me = this; 
                         this.StructureData = {
-                                            IdRole: me.idRole,
                                             Name:me.name,
-                                            TypeDocument: me.type_document,
-                                            NumDocument:me.num_document,
+                                            Type_person: 'Client',
+                                            Type_document: me.type_document,
+                                            Num_document:me.num_document,
                                             Address: me.address,
                                             Phone: me.phone,
-                                            Email: me.email,
-                                            Password:me.password,
-                                            
-
+                                            Email: me.email
                             };
                        var postHeaders = {
                                 'Content-Type': 'application/json',
                                         };
-                       axios.post('api/Users/AddUser',this.StructureData,{
+                       axios.post('api/Persons/AddPerson',this.StructureData,{
                            headers: postHeaders
                        } ).then(function(response){
                             me.close();
@@ -329,66 +278,7 @@ export default {
                        });
                     }
                   
-                },
-                ActivateDeactivateView(actionitem, item){
-                    this.adModal=1;
-                    this.adName= item.name;
-                    this.adIdUser= item.idRole;
-
-
-
-
-                    if(actionitem==1){
-                        this.adAction=1;
-                    }
-                    else if(actionitem==2){
-                      this.adAction=2;
-                    }
-                    else 
-                    {
-                        this.adModal=0;
-                    }
-                  
-                },
-                ActivarArticulo(){
-                                let me = this; 
-                                var postHeaders = {
-                                'Content-Type': 'application/json',
-                                 };
-                            axios.put('api/Users/ActivateUser/'+this.adIdUser,{headers:postHeaders})
-                            .then(function(response){
-                                me.adModal=0;
-                                me.adAction=0;
-                                me.adName="";
-                                me.adIdUser=""
-                                me.list();
-                            }).catch(function(error){
-                                console.log(error);
-                            });
-                },
-                DesactivarArticulo(){
-                                let me = this; 
-                                var postHeaders = {
-                                'Content-Type': 'application/json',
-                                 };
-                            axios.put('api/Users/DeactivateUser/'+this.adIdUser,{headers:postHeaders})
-                            .then(function(response){
-                                me.adModal=0;
-                                me.adAction=0;
-                                me.adName="";
-                                me.adIdUser=""
-                                me.list();
-                            }).catch(function(error){
-                                console.log(error);
-                            });
-                },
-                ActivateDeactivateClose(){
-                    this.adModal=0;
-                }
-                
-
-
-              
+                }             
     }
 }
 </script>
