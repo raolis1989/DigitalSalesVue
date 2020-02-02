@@ -28,11 +28,6 @@
                                                             <v-text-field v-model="name" label="Name"></v-text-field>
                                                         </v-col>
                                                         <v-col cols="12" sm="6" md="4">
-                                                           <v-select v-model="idRole"
-                                                             :items="roles" label="Role">
-                                                             </v-select>
-                                                        </v-col>
-                                                        <v-col cols="12" sm="6" md="4">
                                                            <v-select v-model="type_document"
                                                              :items="documents" label="Type Documents">
                                                              </v-select>
@@ -66,15 +61,7 @@
                                                 </v-card-actions>
                                     </v-card>
                              </v-dialog>
-                    
-                    
-                    
-                    
-                    
-                   
-                   
-                   
-                         <v-dialog v-model="adModal" max-width="290">
+
                              <v-card>
                                  <v-card-title class="headline" v-if="adAction==1">Activate Item?</v-card-title>
                                  <v-card-title class="headline" v-if="adAction==2">Deactivate Item?</v-card-title>
@@ -119,8 +106,8 @@
                         </v-icon>
                     </td>
                     <td>{{ item.name}}</td>
-                    <td>{{ item.type_person}}</td>
-                    <td>{{ item.type_Document }}</td>
+                    <td>{{ item.Type_person}}</td>
+                    <td>{{ item.Type_document }}</td>
                     <td>{{ item.num_Document }}</td>
                     <td>{{ item.address }}</td>
                     <td>{{ item.phone }}</td>
@@ -154,7 +141,7 @@ export default {
                     { text: 'Address', value: 'Adress', sortable:false },
                     { text: 'Phone', value: 'Phone', sortable:false },
                     { text: 'Email', value: 'Email', sortable:false },
-                    { text: 'Estatus', value: 'condition', sortable:false },
+                   
                     
                         ],
                         search:'',              
@@ -184,7 +171,7 @@ export default {
     },
         computed: {
         formTitle () {
-            return this.editedIndex === -1 ? 'New Client' : 'Edit User'
+            return this.editedIndex === -1 ? 'New Client' : 'Edit Client'
         },
         },
 
@@ -197,7 +184,6 @@ export default {
         created () {
 
         this.list();
-        this.selectCategories();
         },
     methods:{
              getColor (calories) {
@@ -208,33 +194,22 @@ export default {
             list(){
                 let me= this;
                 axios.get('api/Persons/ListClients').then(function(response){
+
                     me.clients= response.data
-                }).catch(function(error){
-                        console.log(error)
-                });
-            },
-            selectCategories(){
-                let me= this;
-                var rolesArray=[];
-                axios.get('api/Roles/SelectActive').then(function(response){
-                    rolesArray= response.data;
-                    rolesArray.map(function(x){
-                        me.roles.push({text: x.name, value: x.idRole})
-                    });
+                    console.log(response.data);
                 }).catch(function(error){
                         console.log(error)
                 });
             },
 
                 editItem (item) {
-                    this.id=item.idUser;
-                    this.idRole=item.idRole;
+                    this.id=item.idPerson;
                     this.name= item.name;
-                    this.type_document = item.type_Document;
-                    this.num_document= item.num_Document;
+                    this.type_document = item.Type_document;
+                    this.num_document= item.Num_document;
                     this.address = item.address;
-                    this.phone= item.phone; 
-                    this.email= item.email; 
+                    this.phone= item.Phone; 
+                    this.email= item.Email; 
                     this.editedIndex=1;
                     this.dialog=true;
                     this.actionEdit=true;
@@ -251,16 +226,12 @@ export default {
                 },
                 clear(){
                     this.id="";
-                    this.idRole="";
                     this.name="";
                     this.type_document="";
                     this.num_document="";
                     this.address="";
                     this.phone="";
                     this.email="";
-                    this.password="";
-                    this.passwordAnt="";
-                    this.actPassword="";
                     this.editedIndex=-1;
                 },
                   force(){
