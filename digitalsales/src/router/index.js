@@ -7,6 +7,7 @@ import Role from '../components/Role.vue'
 import User from '../components/User.vue'
 import Client from '../components/Client.vue'
 import Provider from '../components/Providers.vue'
+import Login from '../components/Login.vue'
 
 Vue.use(VueRouter)
 
@@ -45,6 +46,11 @@ const routes = [
     path:'providers',
     name:'providers',
     component:Provider
+  },
+  {
+    path:'/login',
+    name:'login',
+    component:Login
   }
 
 ]
