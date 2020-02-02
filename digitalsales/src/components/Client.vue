@@ -79,8 +79,8 @@
                         </v-icon>
                     </td>
                     <td>{{ item.name}}</td>
-                    <td>{{ item.Type_person}}</td>
-                    <td>{{ item.Type_document }}</td>
+                    <td>{{ item.type_person}}</td>
+                    <td>{{ item.type_document }}</td>
                     <td>{{ item.num_Document }}</td>
                     <td>{{ item.address }}</td>
                     <td>{{ item.phone }}</td>
@@ -178,11 +178,11 @@ export default {
                 editItem (item) {
                     this.id=item.idPerson;
                     this.name= item.name;
-                    this.type_document = item.Type_document;
-                    this.num_document= item.Num_document;
+                    this.type_document = item.type_document;
+                    this.num_document= item.num_document;
                     this.address = item.address;
-                    this.phone= item.Phone; 
-                    this.email= item.Email; 
+                    this.phone= item.phone; 
+                    this.email= item.email; 
                     this.editedIndex=1;
                     this.dialog=true;
                     this.actionEdit=true;
