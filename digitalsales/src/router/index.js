@@ -8,6 +8,7 @@ import User from '../components/User.vue'
 import Client from '../components/Client.vue'
 import Provider from '../components/Providers.vue'
 import Login from '../components/Login.vue'
+import store from '../store/index'
 
 Vue.use(VueRouter)
 
@@ -15,45 +16,101 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: Home
+    component: Home,
+    meta: {
+      Admin :true,
+      Warehouse :true,
+      Seller :true
+
+    }
   },
   {
     path:'categories',
     name: 'categories',
-    component: Category
+    component: Category,
+    meta: {
+      Admin :true,
+      Warehouse :true,
+    }
   },
   {
     path:'articles',
     name:'articles',
-    component: Article
+    component: Article,
+    meta: {
+      Admin :true,
+      Warehouse :true
+    }
   },
   {
     path:'roles',
     name:'roles',
-    component: Role
+    component: Role,
+    meta: {
+      Admin :true,
+    }
   },
   {
     path:'users',
     name:'users',
-    component: User
+    component: User,
+    meta: {
+      Admin :true,
+    }
   },
   {
     path:'clients',
     name:'clients',
-    component:Client
+    component:Client,
+    meta: {
+      Admin :true,
+      Seller :true
+
+    }
   },
   {
     path:'providers',
     name:'providers',
-    component:Provider
+    component:Provider,
+    meta: {
+      Admin :true,
+      Warehouse :true,
+    }
   },
   {
     path:'/login',
     name:'login',
-    component:Login
+    component:Login,
+    meta: {
+      Free:  true
+
+    }
   }
 
 ]
+
+router.beforeEach((ti, from, next) => {
+   if(to.matched.some(record => record.meta.Free))
+   {
+     next()
+   }else if(store.state.user && store.state.user.Role =="Admin"){
+      if(to.matched.some(record => record.meta.Admin)){
+        next()
+      }
+   }else if(store.state.user && store.state.user.Role =="Warehouse"){
+      if(to.matched.some(record => record.meta.Warehouse)){
+        next()
+      }
+   }else if(store.state.user && store.state.user.Role =="Seller"){
+    if(to.matched.some(record => record.meta.Seller)){
+      next()
+    }
+ }else{
+   next({
+     name:'login'
+   })
+ }
+})
 
 const router = new VueRouter({
   mode: 'history',
