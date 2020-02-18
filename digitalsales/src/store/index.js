@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import  decode from 'jwt-decode'
-import  router from './router'
+import  router from '../router'
 
 Vue.use(Vuex)
 
@@ -11,7 +11,7 @@ export default new Vuex.Store({
     user:null
   },
   mutations: {
-    setToken(stat, token){
+    setToken(state, token){
       state.token=token
     },
     setUser(state, user){

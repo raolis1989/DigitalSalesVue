@@ -31,7 +31,7 @@ export default {
     },
     methods :{
         Insert(){
-            axios.post('api/Usuarios/Login', {email:this.email, password: this.password})
+            axios.post('api/Users/Login', {email:this.email, password: this.password})
             .then(request => {
                 return request.data
             })

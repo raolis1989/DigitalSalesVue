@@ -4,9 +4,10 @@
       v-model="drawer"
       :clipped="$vuetify.breakpoint.lgAndUp"
       app
+      v-if="logueado"
     >
       <v-list dense>
-          <template>
+          <template v-if="itsAdministrator || itsWarehouse || itsSeller">
             <v-list-item :to="{name : 'home'}">
               <v-list-item-action>
                 <v-icon>home</v-icon>
@@ -16,7 +17,7 @@
               </v-list-item-title>
             </v-list-item>
           </template>
-            <template>
+            <template v-if="itsAdministrator || itsWarehouse">
               <v-list-group>
                 <v-list-item slot="activator">
                   <v-list-item-content>
@@ -47,7 +48,7 @@
                 </v-list-item>
               </v-list-group>
             </template>
-            <template>
+            <template v-if="itsAdministrator || itsWarehouse">
               <v-list-group>
                 <v-list-item slot="activator">
                   <v-list-item-content>
@@ -78,7 +79,7 @@
                 </v-list-item>
               </v-list-group>
             </template>
-            <template>
+            <template v-if="itsAdministrator || itsSeller">
               <v-list-group>
                 <v-list-item slot="activator">
                   <v-list-item-content>
@@ -109,7 +110,7 @@
                 </v-list-item>
               </v-list-group>
             </template>
-            <template>
+            <template v-if="itsAdministrator">
               <v-list-group>
                 <v-list-item slot="activator">
                   <v-list-item-content>
@@ -140,7 +141,7 @@
                 </v-list-item>
               </v-list-group>
             </template>
-            <template>
+            <template v-if="itsAdministrator">
               <v-list-group>
                 <v-list-item slot="activator">
                   <v-list-item-content>
@@ -223,6 +224,26 @@ export default{
      return{
        drawer:null,
      }
+   },
+   computed:{
+     logueado(){
+        return this.$store.state.User;
+     },
+     itsAdministrator(){
+        return  this.$store.state.User && this.$store.state.User.Role ==  'Admin';
+     },
+     itsWarehouse(){
+        return  this.$store.state.User && this.$store.state.User.Role ==  'Warehouse';
+     },
+     itsSeller(){
+return  this.$store.state.User && this.$store.state.User.Role ==  'Seller';
+     }
+   },
+   created(){
+      this.$store.dispatch("autoLogin");
+   },
+   methods :{
+
    }
 }
 </script>

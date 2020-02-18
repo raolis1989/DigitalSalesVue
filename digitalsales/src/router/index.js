@@ -89,7 +89,16 @@ const routes = [
 
 ]
 
-router.beforeEach((ti, from, next) => {
+const router = new VueRouter({
+  mode: 'history',
+  base: process.env.BASE_URL,
+  routes
+})
+
+export default router
+
+router.beforeEach( async  (to, from, next) => {
+  await Vue.nextTick()
    if(to.matched.some(record => record.meta.Free))
    {
      next()
@@ -111,11 +120,3 @@ router.beforeEach((ti, from, next) => {
    })
  }
 })
-
-const router = new VueRouter({
-  mode: 'history',
-  base: process.env.BASE_URL,
-  routes
-})
-
-export default router
