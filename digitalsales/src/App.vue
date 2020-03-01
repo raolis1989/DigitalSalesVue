@@ -189,8 +189,11 @@
         <span class="hidden-sm-and-down">Digital Sales</span>
       </v-toolbar-title>
       <v-spacer />
-      <v-btn icon>
-        <v-icon>apps</v-icon>
+      <v-btn @click="exit" v-if="logueado" icon>
+        <v-icon>logout</v-icon> Exit
+      </v-btn>
+      <v-btn  :to="{name:'login'}" v-else> 
+        <v-icon>apps</v-icon> Login
       </v-btn>
     </v-app-bar>
     <v-content>
@@ -245,7 +248,9 @@ return  this.$store.state.user && this.$store.state.user.rol ==  'Seller';
       this.$store.dispatch("autoLogin");
    },
    methods :{
-
+     exit(){
+       this.$store.dispatch("exit");
+     }
    }
 }
 </script>
