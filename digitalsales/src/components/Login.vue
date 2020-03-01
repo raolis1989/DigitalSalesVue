@@ -36,8 +36,9 @@ export default {
                 return request.data
             })
             .then(data => {
+                
                 this.$store.dispatch("saveToken", data.token)
-                this.$router.push({name:'home'})
+                this.$router.go({ name: 'home' })
             })
             .catch(err => {
                 console.log(err);

@@ -226,17 +226,19 @@ export default{
      }
    },
    computed:{
+    
      logueado(){
-        return this.$store.state.User;
+      
+        return this.$store.state.user;
      },
      itsAdministrator(){
-        return  this.$store.state.User && this.$store.state.User.Role ==  'Admin';
+        return  this.$store.state.user && this.$store.state.user.rol ==  'Admin';
      },
      itsWarehouse(){
-        return  this.$store.state.User && this.$store.state.User.Role ==  'Warehouse';
+        return  this.$store.state.user && this.$store.state.user.rol ==  'Warehouse';
      },
      itsSeller(){
-return  this.$store.state.User && this.$store.state.User.Role ==  'Seller';
+return  this.$store.state.user && this.$store.state.user.rol ==  'Seller';
      }
    },
    created(){

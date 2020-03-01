@@ -3,6 +3,9 @@ import Vuex from 'vuex'
 import  decode from 'jwt-decode'
 import  router from '../router'
 
+
+
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -21,16 +24,19 @@ export default new Vuex.Store({
   actions: {
     saveToken({commit}, token){
         commit("setToken", token)
-        commit("setUser", decode(user))
+        commit("setUser", decode(token))
         localStorage.setItem("token", token)
     },
     autoLogin({commit}){
       let  token = localStorage.getItem("token")
       if(token){
         commit("setToken", token)
-        commit("setuser", decode(token))
+        commit("setUser", decode(token))
       }
-      router.push({name:'home'})
+      console.log(router);
+      router.push('/')
+   
+      //router.push('/')
     },
     exit({commit}){
        commit("setUser", null)
@@ -38,7 +44,5 @@ export default new Vuex.Store({
        localStorage.removeItem("token")
        router.push({name: 'login'})
     }
-  },
-  modules: {
   }
 })

@@ -97,20 +97,19 @@ const router = new VueRouter({
 
 export default router
 
-router.beforeEach( async  (to, from, next) => {
-  await Vue.nextTick()
+router.beforeEach( (to, from, next) => {
    if(to.matched.some(record => record.meta.Free))
    {
      next()
-   }else if(store.state.user && store.state.user.Role =="Admin"){
+   }else if(store.state.user && store.state.user.rol =="Admin"){
       if(to.matched.some(record => record.meta.Admin)){
         next()
       }
-   }else if(store.state.user && store.state.user.Role =="Warehouse"){
+   }else if(store.state.user && store.state.user.rol =="Warehouse"){
       if(to.matched.some(record => record.meta.Warehouse)){
         next()
       }
-   }else if(store.state.user && store.state.user.Role =="Seller"){
+   }else if(store.state.user && store.state.user.rol =="Seller"){
     if(to.matched.some(record => record.meta.Seller)){
       next()
     }
