@@ -166,7 +166,9 @@ export default {
                 },
             list(){
                 let me= this;
-                axios.get('api/Persons/ListClients').then(function(response){
+                 let header={"Authorization" : "Bearer " + this.$store.state.token};
+                let configuration={ headers: header};
+                axios.get('api/Persons/ListClients',configuration).then(function(response){
 
                     me.clients= response.data
                     console.log(response.data);
@@ -243,6 +245,7 @@ export default {
                             };
                              var postHeaders = {
                                 'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + this.$store.state.token,
                             };
                             axios.put('api/Persons/UpdateClient', this.StructureData,{headers:postHeaders})
                             .then(function(response){
@@ -266,6 +269,8 @@ export default {
                             };
                        var postHeaders = {
                                 'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + this.$store.state.token,
+
                                         };
                        axios.post('api/Persons/AddPerson',this.StructureData,{
                            headers: postHeaders

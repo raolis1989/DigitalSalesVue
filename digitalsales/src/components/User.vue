@@ -233,7 +233,9 @@ export default {
                 },
             list(){
                 let me= this;
-                axios.get('api/Users/List').then(function(response){
+                  let header={"Authorization" : "Bearer " + this.$store.state.token};
+                let configuration={ headers: header};
+                axios.get('api/Users/List',configuration).then(function(response){
                     me.users= response.data
                 }).catch(function(error){
                         console.log(error)
@@ -242,7 +244,9 @@ export default {
             selectCategories(){
                 let me= this;
                 var rolesArray=[];
-                axios.get('api/Roles/SelectActive').then(function(response){
+                  let header={"Authorization" : "Bearer " + this.$store.state.token};
+                let configuration={ headers: header};
+                axios.get('api/Roles/SelectActive',configuration).then(function(response){
                     rolesArray= response.data;
                     rolesArray.map(function(x){
                         me.roles.push({text: x.name, value: x.idRole})
@@ -346,6 +350,7 @@ export default {
                             };
                              var postHeaders = {
                                 'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + this.$store.state.token,
                             };
                             axios.put('api/Users/UpdateUser', this.StructureData,{headers:postHeaders})
                             .then(function(response){
@@ -372,6 +377,7 @@ export default {
                             };
                        var postHeaders = {
                                 'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + this.$store.state.token,
                                         };
                        axios.post('api/Users/AddUser',this.StructureData,{
                            headers: postHeaders
@@ -407,10 +413,13 @@ export default {
                 },
                 ActivarArticulo(){
                                 let me = this; 
+                                let header={"Authorization" : "Bearer " + this.$store.state.token};
+                                let configuration={ headers: header};
                                 var postHeaders = {
                                 'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + this.$store.state.token,
                                  };
-                            axios.put('api/Users/ActivateUser/'+this.adIdUser,{headers:postHeaders})
+                            axios.put('api/Users/ActivateUser/'+this.adIdUser,configuration,{headers:postHeaders})
                             .then(function(response){
                                 me.adModal=0;
                                 me.adAction=0;
@@ -423,10 +432,13 @@ export default {
                 },
                 DesactivarArticulo(){
                                 let me = this; 
+                                let header={"Authorization" : "Bearer " + this.$store.state.token};
+                                let configuration={ headers: header};
                                 var postHeaders = {
                                 'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + this.$store.state.token,
                                  };
-                            axios.put('api/Users/DeactivateUser/'+this.adIdUser,{headers:postHeaders})
+                            axios.put('api/Users/DeactivateUser/'+this.adIdUser,configuration,{headers:postHeaders})
                             .then(function(response){
                                 me.adModal=0;
                                 me.adAction=0;

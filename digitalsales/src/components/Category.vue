@@ -188,8 +188,12 @@ export default {
                   
                 },
             list(){
+                console.log(this.$store.state.token);
+                
                 let me= this;
-                axios.get('api/Categories/List').then(function(response){
+                let header={"Authorization" : "Bearer " + this.$store.state.token};
+                let configuration={ headers: header};
+                axios.get('api/Categories/List', configuration).then(function(response){
                     me.categories= response.data
                 }).catch(function(error){
                         console.log(error)
@@ -240,6 +244,8 @@ export default {
                     if (this.editedIndex > -1) {
                             //code for edit
                             let me = this; 
+                            let header={"Authorization" : "Bearer " + this.$store.state.token};
+                             let configuration={ headers: header};
                             this.StructureData = {
                                             IdCategory: me.id,
                                             Name: me.name,
@@ -247,6 +253,7 @@ export default {
                             };
                              var postHeaders = {
                                 'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + this.$store.state.token,
                             };
                             axios.put('api/Categories/UpdateCategory', this.StructureData,{headers:postHeaders})
                             .then(function(response){
@@ -265,6 +272,7 @@ export default {
                                             };
                        var postHeaders = {
                                 'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + this.$store.state.token,
                                         };
                        axios.post('api/Categories/AddCategory',this.StructureData,{
                            headers: postHeaders
@@ -300,10 +308,13 @@ export default {
                 },
                 ActivarCategory(){
                                 let me = this; 
+                                 let header={"Authorization" : "Bearer " + this.$store.state.token};
+                             let configuration={ headers: header};
                                 var postHeaders = {
                                 'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + this.$store.state.token,
                                  };
-                            axios.put('api/Categories/ActivateCategory/'+this.adIdCategory,{headers:postHeaders})
+                            axios.put('api/Categories/ActivateCategory/'+this.adIdCategory, configuration, {headers:postHeaders})
                             .then(function(response){
                                 me.adModal=0;
                                 me.adAction=0;
@@ -316,10 +327,13 @@ export default {
                 },
                 DesactivarCategory(){
                                 let me = this; 
+                                  let header={"Authorization" : "Bearer " + this.$store.state.token};
+                             let configuration={ headers: header};
                                 var postHeaders = {
                                 'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + this.$store.state.token,
                                  };
-                            axios.put('api/Categories/DeactivateCategory/'+this.adIdCategory,{headers:postHeaders})
+                            axios.put('api/Categories/DeactivateCategory/'+this.adIdCategory,configuration, {headers:postHeaders})
                             .then(function(response){
                                 me.adModal=0;
                                 me.adAction=0;

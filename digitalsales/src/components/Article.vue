@@ -217,7 +217,9 @@ export default {
                 },
             list(){
                 let me= this;
-                axios.get('api/Articles/List').then(function(response){
+                let header={"Authorization" : "Bearer " + this.$store.state.token};
+                let configuration={ headers: header};
+                axios.get('api/Articles/List', configuration).then(function(response){
                     me.articles= response.data
                 }).catch(function(error){
                         console.log(error)
@@ -225,8 +227,10 @@ export default {
             },
             selectCategories(){
                 let me= this;
+                let header={"Authorization" : "Bearer " + this.$store.state.token};
+                let configuration={ headers: header};
                 var categoriesArray=[];
-                axios.get('api/Categories/SelectActive').then(function(response){
+                axios.get('api/Categories/SelectActive',configuration).then(function(response){
                     categoriesArray= response.data;
                     categoriesArray.map(function(x){
                         me.categories.push({text: x.name, value: x.idCategory})
@@ -307,6 +311,7 @@ export default {
                             };
                              var postHeaders = {
                                 'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + this.$store.state.token,
                             };
                             axios.put('api/Articles/UpdateArticle', this.StructureData,{headers:postHeaders})
                             .then(function(response){
@@ -329,6 +334,7 @@ export default {
                             };
                        var postHeaders = {
                                 'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + this.$store.state.token,
                                         };
                        axios.post('api/Articles/AddArticle',this.StructureData,{
                            headers: postHeaders
@@ -364,10 +370,13 @@ export default {
                 },
                 ActivarArticulo(){
                                 let me = this; 
+                                let header={"Authorization" : "Bearer " + this.$store.state.token};
+                             let configuration={ headers: header};
                                 var postHeaders = {
                                 'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + this.$store.state.token,
                                  };
-                            axios.put('api/Articles/ActivateArticle/'+this.adIdArticle,{headers:postHeaders})
+                            axios.put('api/Articles/ActivateArticle/'+this.adIdArticle,configuration,{headers:postHeaders})
                             .then(function(response){
                                 me.adModal=0;
                                 me.adAction=0;
@@ -380,10 +389,13 @@ export default {
                 },
                 DesactivarArticulo(){
                                 let me = this; 
+                                let header={"Authorization" : "Bearer " + this.$store.state.token};
+                                let configuration={ headers: header};
                                 var postHeaders = {
                                 'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + this.$store.state.token,
                                  };
-                            axios.put('api/Articles/DeactivateArticle/'+this.adIdArticle,{headers:postHeaders})
+                            axios.put('api/Articles/DeactivateArticle/'+this.adIdArticle,configuration,{headers:postHeaders})
                             .then(function(response){
                                 me.adModal=0;
                                 me.adAction=0;
