@@ -9,6 +9,7 @@ import Client from '../components/Client.vue'
 import Provider from '../components/Providers.vue'
 import Login from '../components/Login.vue'
 import store from '../store/index'
+import Entry from '../components/Entry.vue'
 
 Vue.use(VueRouter)
 
@@ -22,6 +23,15 @@ const routes = [
       Warehouse :true,
       Seller :true
 
+    }
+  },
+  {
+    path:'entries',
+    name: 'entries',
+    component: Entry,
+    meta: {
+      Admin :true,
+      Warehouse :true,
     }
   },
   {
