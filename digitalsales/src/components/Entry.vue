@@ -126,7 +126,7 @@
                             </v-text-field>
                         </v-flex>
                         <v-flex xs12 sm8 md8 lg8 xl8>
-                            <v-text-field v-model="code" label="Code">
+                            <v-text-field @keyup.enter="findCodeArticle()" v-model="Code" label="Code">
 
                             </v-text-field>
                         </v-flex>
@@ -134,6 +134,11 @@
                             <v-btn small fab dark color="teal">
                                 <v-icon dark>list</v-icon>
                             </v-btn>
+                        </v-flex>
+                        <v-flex xs12 sm2 md4 lg2 xl2 v-if="errorArticle">
+                                <div class="red--text" v-text="errorArticle">
+
+                                </div>
                         </v-flex>
                         <v-flex xs12 sm12 md12 lg12 xl12>
                                     <v-data-table
@@ -149,14 +154,15 @@
                                     <td class="layout px-5">
                                         <v-icon            
                                         class="mr-2"
+                                        @click="deleteDetailArticle(details,item)"
                                         >
                                         delete
                                         </v-icon>
                                     </td>
                                     <td>{{ item.article}}</td>
-                                    <td>{{ item.quantity}}</td>
-                                    <td>{{ item.price }}</td>
-                                    <td>{{ item.quantity* item.price }}</td>
+                                    <td><v-text-field type='number' v-model="item.quantity"></v-text-field></td>
+                                    <td><v-text-field type='number' v-model="item.price"></v-text-field></td>
+                                    <td>${{ item.quantity* item.price }}</td>
                                     </tr>
                                                                 
                                         
@@ -165,6 +171,15 @@
                                       <h3>Not add Articles </h3>
                                     </template>
                             </v-data-table>
+                            <v-flex class="text-xs-right">
+                                <strong>Total Partial:</strong> ${{totalPartial=( totalNeto-totalTax).toFixed(2)}}
+                            </v-flex>
+                            <v-flex class="text-xs-right">
+                                <strong>Total Tax:</strong> ${{totalTax=((totalNeto * tax)/(100 + tax)).toFixed(2)}}
+                            </v-flex>
+                            <v-flex class="text-xs-right">
+                                <strong>Total Neto:</strong> ${{totalNeto= (calculeTotal).toFixed(2)}}
+                            </v-flex>
                         </v-flex>
                         <v-flex xs12 sm12 md12 lg12 xl12>
                              <div class="red--text" v-for="v in validationMessage" :key="v" v-text="v"></div>
@@ -208,8 +223,7 @@ export default {
                     
                         ],
                         details:[
-                            {idArticle:'1000', article:'Articulo 1', quantity:'65', price:'1000'},
-                            {idArticle:'2000', article:'Articulo 2', quantity:'100', price:'5500'}
+                           
                         ],
                         search:'',              
                         editedIndex: -1,
@@ -227,14 +241,22 @@ export default {
                          adModal:0,
                          adAction:0,
                          adName:'',
-                         adIdUser:''
+                         adIdUser:'',
+                         errorArticle: null,
+                         totalPartial:0,
+                         totalNeto:0,
+                         totalTax:0
             }
 
     },
         computed: {
-        formTitle () {
-            return this.editedIndex === -1 ? 'New Entry' : 'Edit Entry'
-        },
+            calculeTotal:function(){
+                var resultado=0.0;
+                for (var i=0; i<this.details.length;i++){
+                    resultado= resultado+(this.details[i].price*this.details[i].quantity);
+                }
+                return resultado;
+            }
         },
 
         watch: {
@@ -256,6 +278,53 @@ export default {
                      else return 'red'
                   
                 },
+                 addDetail(data =[]){  
+                    this.errorArticle=null; 
+                     if(this.findArticleDetail(data['idArticle'])){
+                         this.errorArticle="this article has already been added";
+                     }else{
+                    this.details.push(
+                    {idArticle:data['idArticle'],
+                    article:data['name'],
+                    quantity:1,
+                    price:1
+                    })
+                     }
+                    
+            },
+            findArticleDetail(id){
+                var sw=0;
+                console.log(id);
+                for(var i=0; i<this.details.length;i++)
+                {
+                    if(this.details[i].idArticle==id)
+                    {
+                        sw=1;
+                    }
+                }
+                return sw;
+            },
+            findCodeArticle(){
+                
+                let me= this;
+                me.errorArticle=null;
+                let header={"Authorization" : "Bearer " + this.$store.state.token};
+                let configuration={ headers: header};
+                axios.get('api/Articles/ObtainArticleForCode/'+this.Code  ,configuration).then(function(response){
+                    console.log(response)
+                    
+                   me.addDetail(response.data)
+                }).catch(function(error){
+                    me.errorArticle="Not exists code article"
+                        console.log(error)
+                });
+            },
+            deleteDetailArticle(arr, item){
+                var i= arr.indexOf(item);
+                if(i!=-1){
+                    arr.splice(i,1);
+                }
+            },
             list(){
                 let me= this;
                   let header={"Authorization" : "Bearer " + this.$store.state.token};
