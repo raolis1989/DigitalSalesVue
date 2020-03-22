@@ -16,7 +16,63 @@
                               <v-btn v-if="viewNew==0" @click="viewerNew"  color="primary" dark class="mb-2">New</v-btn>
                    
                    
-                   
+                         <v-dialog v-model="viewArticles" max-width="1000px">
+                             <v-card>
+                                 <v-card-title>
+                                     <span class="headline">Seleccione un articulo</span>
+                                 </v-card-title>
+                                 <v-card-text>
+                                    <v-container grid-list-md>
+                                        <v-layout wrap>
+                                            <v-flex xs12 sm12 md12 lg12 xl12>
+                                                <v-text-field append-icon="search" 
+                                                class="text-xs-center" v-model="text"
+                                                aria-label="Entry Article at find" @keyup.enter="listArticle()">
+
+                                                </v-text-field>
+                                                <template>
+                                                     <v-data-table
+                                                        :headers="headersArticles"
+                                                        :items="articles"
+                                                        sort-by="calories"
+                                                        class="elevation-1"
+                                                    >
+
+                                                    <template v-slot:item="{ item }"> 
+                                                    <tr>                        
+                                                     <td class="justify-center layout px-0">
+                                                    <v-icon   
+                                                    small         
+                                                    class="mr-2"
+                                                    @click="addDetail(item)"
+                                                    >
+                                                    add
+                                                    </v-icon>
+                                                    </td>
+                                                        <td>{{ item.name}}</td>
+                                                        <td>{{item.category}}</td>
+                                                        <td>{{item.description}}</td>
+                                                        <td>{{item.stock}}</td>
+                                                        <td>{{item.price_Sale}}</td>
+                                                        </tr>  
+                                                        </template>
+                                                        <template v-slot:no-data>
+                                                        <h3>Not add Articles </h3>
+                                                        </template>
+                                                    </v-data-table>
+                                                </template>
+                                            </v-flex>
+                                        </v-layout>
+                                    </v-container>
+                                 </v-card-text>
+                                 <v-card-actions>
+                                     <v-spacer></v-spacer>
+                                     <v-btn @click="hideArticles()" color="blue darken" flat>
+                                         Cancel
+                                     </v-btn>
+                                 </v-card-actions>
+                             </v-card>
+                         </v-dialog>
                          <v-dialog v-model="adModal" max-width="290">
                              <v-card>
                                  <v-card-title class="headline" v-if="adAction==1">Activate Item?</v-card-title>
@@ -131,7 +187,7 @@
                             </v-text-field>
                         </v-flex>
                         <v-flex xs12 sm2 md4 lg2 xl2>
-                            <v-btn small fab dark color="teal">
+                            <v-btn @click="showArticles()"  small fab dark color="teal">
                                 <v-icon dark>list</v-icon>
                             </v-btn>
                         </v-flex>
@@ -236,6 +292,17 @@ export default {
                          Code:'',
                          viewNew:0,
                          total:'',
+                         headersArticles :[
+                             {text:'Select', value: 'select', sortable:false},
+                             {text:'Article', value:'article'},
+                             {text:'Category', value:'category'},
+                             {text:'Description', value:'description', sortable: false},
+                             {text:'Stock', value:'stock', sortable:false},
+                             { text: 'Price Sale', value: 'price_Sale', sortable:false },
+                         ],
+                         articles:[],
+                         text:'',
+                         viewArticles:0,
                          validation:'',
                          validationMessage:[],
                          adModal:0,
@@ -278,7 +345,7 @@ export default {
                      else return 'red'
                   
                 },
-                 addDetail(data =[]){  
+            addDetail(data =[]){  
                     this.errorArticle=null; 
                      if(this.findArticleDetail(data['idArticle'])){
                          this.errorArticle="this article has already been added";
@@ -318,6 +385,22 @@ export default {
                     me.errorArticle="Not exists code article"
                         console.log(error)
                 });
+            },
+            listArticle(){
+                let me =this; 
+                let header={"Authorization": "Bearer " + this.$store.state.token};
+                let configuration = {headers : header};
+                axios.get('api/Articles/ListEntry/'+me.text, configuration).then(function(response){
+                        me.articles= response.data;
+                }).catch(function(error){
+                    console.log(error);
+                });
+            },
+            showArticles(){
+                this.viewArticles=1;
+            },
+            hideArticles(){
+                this.viewArticles=0;
             },
             deleteDetailArticle(arr, item){
                 var i= arr.indexOf(item);
