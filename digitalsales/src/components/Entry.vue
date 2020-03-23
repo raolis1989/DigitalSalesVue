@@ -26,7 +26,7 @@
                                         <v-layout wrap>
                                             <v-flex xs12 sm12 md12 lg12 xl12>
                                                 <v-text-field append-icon="search" 
-                                                class="text-xs-center" v-model="text"
+                                                class="text-xs-center" v-model="textFind"
                                                 aria-label="Entry Article at find" @keyup.enter="listArticle()">
 
                                                 </v-text-field>
@@ -67,7 +67,7 @@
                                  </v-card-text>
                                  <v-card-actions>
                                      <v-spacer></v-spacer>
-                                     <v-btn @click="hideArticles()" color="blue darken" flat>
+                                     <v-btn @click="hideArticles()" color="blue darken" text>
                                          Cancel
                                      </v-btn>
                                  </v-card-actions>
@@ -163,7 +163,7 @@
                 <v-layout row wrap>
                         <v-flex xs12 sm md4 lg4 xl4>
                             <v-select v-model="type_Voucher"
-                            :items="vochers" label="Type Voucher">
+                            :items="vouchers" label="Type Voucher">
                             </v-select>
                         </v-flex>
                         <v-flex xs12 sm md4 lg4 xl4>
@@ -202,7 +202,7 @@
                                     :items="details"
                                     sort-by="calories"
                                     class="elevation-1"
-                                    hide-actions
+                                    hide-default-footer
                                     >
 
                                 <template v-slot:item="{ item }">   
@@ -241,8 +241,8 @@
                              <div class="red--text" v-for="v in validationMessage" :key="v" v-text="v"></div>
                         </v-flex>
                         <v-flex xs12 sm12 md12 lg12 xl12>
-                            <v-btn @click="disableNew" color="blue darken-1" flat>Cancelar</v-btn>
-                            <v-btn color="success">Save</v-btn>
+                            <v-btn @click="disableNew" color="blue darken-1" text>Cancelar</v-btn>
+                            <v-btn @click="save()" color="success">Save</v-btn>
                         </v-flex>
                 </v-layout>
             </v-container>
@@ -278,20 +278,19 @@ export default {
                     { text: 'Subtotal', value: 'subtotal', sortable:false },
                     
                         ],
-                        details:[
-                           
-                        ],
+                        details:[],
                         search:'',              
-                        editedIndex: -1,
                          id:'',
-                         type_voucher:'',
+                         type_Voucher:'',
+                         idprovider:'',
                          providers:[],
+                         type_document:'',
                          vouchers:['FACTURA', 'BOLETA', 'TICKET', 'GUIA'],
-                         num_voucher:0,
+                         num_Voucher:0,
                          tax:18,
                          Code:'',
                          viewNew:0,
-                         total:'',
+                         total:0 ,
                          headersArticles :[
                              {text:'Select', value: 'select', sortable:false},
                              {text:'Article', value:'article'},
@@ -301,7 +300,7 @@ export default {
                              { text: 'Price Sale', value: 'price_Sale', sortable:false },
                          ],
                          articles:[],
-                         text:'',
+                         textFind:'',
                          viewArticles:0,
                          validation:'',
                          validationMessage:[],
@@ -339,7 +338,7 @@ export default {
         },
     methods:{
              viewerNew(){this.viewNew=1;},
-             disableNew(){this.viewNew=0},
+             disableNew(){this.viewNew=0; this.clear();},
              getColor (calories) {
                  if (calories =="ACCEPTED") return 'blue'
                      else return 'red'
@@ -390,7 +389,7 @@ export default {
                 let me =this; 
                 let header={"Authorization": "Bearer " + this.$store.state.token};
                 let configuration = {headers : header};
-                axios.get('api/Articles/ListEntry/'+me.text, configuration).then(function(response){
+                axios.get('api/Articles/ListEntry/'+me.textFind, configuration).then(function(response){
                         me.articles= response.data;
                 }).catch(function(error){
                     console.log(error);
@@ -434,68 +433,43 @@ export default {
                         console.log(error)
                 });
             },
-
-                editItem (item) {
-                    this.id=item.idUser;
-                    this.idRole=item.idRole;
-                    this.name= item.name;
-                    this.type_document = item.type_Document;
-                    this.num_document= item.num_Document;
-                    this.address = item.address;
-                    this.phone= item.phone; 
-                    this.email= item.email; 
-                    this.editedIndex=1;
-                    this.dialog=true;
-                    this.actionEdit=true;
-                },
-
                 deleteItem (item) {
                     const index = this.desserts.indexOf(item)
                     confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
                 },
-
-                close () {
-                    this.dialog = false
-                    this.clear();
-                },
                 clear(){
                     this.id="";
-                    this.idRole="";
-                    this.name="";
+                    this.idprovider="";
                     this.type_document="";
                     this.num_document="";
-                    this.address="";
-                    this.phone="";
-                    this.email="";
-                    this.password="";
-                    this.passwordAnt="";
-                    this.actPassword="";
-                    this.editedIndex=-1;
+                    this.tax="18";
+                    this.Code="";
+                    this.details="";
+                    this.total=0;
+                    this.totalTax=0;
+                    this.totalPartial=0;
                 },
                   force(){
                     this.validation=0;
                     this.validationMessage=[];
-                    if(this.name.length<'3' || this.name.length>'100'){
-                        this.validationMessage.push("El nombre debe tener mas de 3 caracteres y menos de 50 caractares");
-
+                    if(!this.idprovider){
+                        this.validationMessage.push("Selecciones un proveedor.")
                     }
-                    if(!this.idRole){
-                        this.validationMessage.push("Selecciones un rol.")
-                    }
-                    if(!this.type_document){
+                    if(!this.type_Voucher){
                         this.validationMessage.push("Seleccione un tipo de documento");
                     }
-                    if(!this.email)
+                    if(!this.num_Voucher)
                     {
 
-                        this.validationMessage.push("Ingrese el email del usuario");
+                        this.validationMessage.push("Ingrese numero de comprobante");
                     }
-                    if(!this.actionEdit)
-                    {
-                    if(!this.password){
-                        this.validationMessage.push("Ingrese el password del usuario");
+                    if(!this.tax || this.tax<0){
+                        this.validationMessage.push("Ingrese un impuesto valido");
                     }
+                    if(this.details.length<=0){
+                        this.validationMessage.push("Ingrese al menos un articulo al detalle.")
                     }
+                    
                     
                     if(this.validationMessage.length){
                         this.validation=1;
@@ -506,59 +480,22 @@ export default {
                     if(this.force()){
                         return;
                     }
-                    if (this.editedIndex > -1) {
-                            //code for edit
-                            let me = this; 
-                            if(me.password.length>0)
-                            {
-                                 me.actPassword=true;
-                            }
-
-                            this.StructureData = {
-                                            IdUSer:me.id,
-                                            IdRole: me.idRole,
-                                            Name:me.name,
-                                            TypeDocument: me.type_document,
-                                            NumDocument:me.num_document,
-                                            Address: me.address,
-                                            Phone: me.phone,
-                                            Email: me.email,
-                                            Password:me.password,
-                                            ActPassword : me.actPassword
-
-                            };
-                             var postHeaders = {
-                                'Content-Type': 'application/json',
-                                'Authorization': 'Bearer ' + this.$store.state.token,
-                            };
-                            axios.put('api/Users/UpdateUser', this.StructureData,{headers:postHeaders})
-                            .then(function(response){
-                                me.close();
-                                me.list();
-                                me.clear();
-                            }).catch(function(error){
-                                console.log(error);
-                            });
-                    } else {
-                       //code for add 
                        let me = this; 
+                       console.log("Id Usuario "+ me.$store.state.user.idUser,)
                         this.StructureData = {
-                                            IdRole: me.idRole,
-                                            Name:me.name,
-                                            TypeDocument: me.type_document,
-                                            NumDocument:me.num_document,
-                                            Address: me.address,
-                                            Phone: me.phone,
-                                            Email: me.email,
-                                            Password:me.password,
-                                            
-
+                                            IdProvider: me.idprovider,
+                                            IdUser:parseInt(me.$store.state.user.idUser),
+                                            Type_Voucher: me.type_Voucher,
+                                            Num_Voucher:me.num_Voucher,
+                                            Tax: me.tax,
+                                            Total: me.total,  
+                                            Details: me.details
                             };
                        var postHeaders = {
                                 'Content-Type': 'application/json',
                                 'Authorization': 'Bearer ' + this.$store.state.token,
                                         };
-                       axios.post('api/Users/AddUser',this.StructureData,{
+                       axios.post('api/Entries/AddEntry',this.StructureData,{
                            headers: postHeaders
                        } ).then(function(response){
                             me.close();
@@ -567,7 +504,7 @@ export default {
                        }).catch(function(error){
                             console.log(error);
                        });
-                    }
+                    
                   
                 },
                 ActivateDeactivateView(actionitem, item){
