@@ -113,9 +113,9 @@
                     <td class="layout px-5">
                         <v-icon            
                         class="mr-2"
-                        @click="editItem(item)"
+                        @click="viewDetails(item)"
                         >
-                        edit
+                        tab
                         </v-icon>
                         <template v-if="item.status=='ACCEPTED'">
                             <v-icon
@@ -217,7 +217,7 @@
                                     </td>
                                     <td>{{ item.article}}</td>
                                     <td><v-text-field type='number' min="0" step=".1" v-model.number="item.quantity"></v-text-field></td>
-                                    <td><v-text-field type='number' :rules="[numberRule]" v-model.number="item.price" ></v-text-field></td>
+                                    <td><v-text-field type='number' v-model.number="item.price" ></v-text-field></td>
                                     <td>${{ item.quantity* item.price }}</td>
                                     </tr>
                                                                 
@@ -242,7 +242,7 @@
                         </v-flex>
                         <v-flex xs12 sm12 md12 lg12 xl12>
                             <v-btn @click="disableNew()" color="blue darken-1" text>Cancelar</v-btn>
-                            <v-btn @click="save()" color="success">Save</v-btn>
+                            <v-btn  @click="save()" color="success">Save</v-btn>
                         </v-flex>
                 </v-layout>
             </v-container>
@@ -256,11 +256,7 @@ import axios from 'axios'
 export default {
     data(){
     return {
-                 numberRule: v  => {
-      if (!v.trim()) return true;
-      if (!isNaN(parseFloat(v)) && v >= 0 && v <= 999) return true;
-      return 'Number has to be between 0 and 999';
-    },
+              
                 entries:[],
                 dialog: false,
                  headers: [
@@ -316,7 +312,8 @@ export default {
                          errorArticle: null,
                          totalPartial:0,
                          totalNeto:0,
-                         totalTax:0
+                         totalTax:0,
+                         viewDetail:0,
             }
 
     },
@@ -349,7 +346,8 @@ export default {
                      else return 'red'
                   
                 },
-            addDetail(data =[]){  
+            addDetail(data =''){  
+                    console.log(data)
                     this.errorArticle=null; 
                      if(this.findArticleDetail(data['idArticle'])){
                          this.errorArticle="this article has already been added";
@@ -395,16 +393,29 @@ export default {
                 let header={"Authorization": "Bearer " + this.$store.state.token};
                 let configuration = {headers : header};
                 axios.get('api/Articles/ListEntry/'+me.textFind, configuration).then(function(response){
-                        me.articles= response.data;
+                        me.articles= response.data || [];
                 }).catch(function(error){
                     console.log(error);
                 });
             },
+            viewDetails(item)
+            {
+                this.clear();
+                this.type_Voucher= item.type_Voucher;
+                this.num_Voucher= item.num_Voucher;
+                this.idprovider= item.IdProvider;
+                this.Tax= item.tax;
+                this.listDetails(item.idEntry);
+                this.viewNew=1;
+                //this.viewDetail=1;
+            },
             showArticles(){
+                this.articles=[];
                 this.viewArticles=1;
             },
             hideArticles(){
                 this.viewArticles=0;
+                this.articles=[];
             },
             deleteDetailArticle(arr, item){
                 var i= arr.indexOf(item);
@@ -421,6 +432,17 @@ export default {
                     console.log(me.entries);
                 }).catch(function(error){
                         console.log(error)
+                });
+            },
+            listDetails(id){
+                let me =this; 
+                let header={"Authorization": "Bearer " + this.$store.state.token};
+                let configuration = {headers : header};
+                axios.get('api/Entries/ListDetailEntry/'+id, configuration).then(function(response){
+                        me.details= response.data= response.data || [];
+                         console.log(me.details);
+                }).catch(function(error){
+                    console.log(error);
                 });
             },
             selectProviders(){
@@ -449,10 +471,11 @@ export default {
                     this.num_Voucher=0;
                     this.tax="18";
                     this.Code="";
-                    this.details="";
+                    this.details=[];
                     this.total=0;
                     this.totalTax=0;
                     this.totalPartial=0;
+                    this.articles=[];
                 },
                   force(){
                     this.validation=0;
@@ -504,7 +527,7 @@ export default {
                        axios.post('api/Entries/AddEntry',this.StructureData,{
                            headers: postHeaders
                        } ).then(function(response){
-                           console.log(response);
+                           
                             me.disableNew()
                             me.list()
                             me.clear();
