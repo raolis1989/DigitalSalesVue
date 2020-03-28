@@ -10,7 +10,7 @@
                             vertical
                         ></v-divider>
                         <v-spacer></v-spacer>
-                            <v-text-field class="text-xs-center" v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
+                            <v-text-field v-if="viewNew==0" class="text-xs-center" v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
                             <v-spacer></v-spacer>
 
                               <v-btn v-if="viewNew==0" @click="viewerNew"  color="primary" dark class="mb-2">New</v-btn>
@@ -216,8 +216,8 @@
                                         </v-icon>
                                     </td>
                                     <td>{{ item.article}}</td>
-                                    <td><v-text-field type='number' v-model="item.quantity"></v-text-field></td>
-                                    <td><v-text-field type='number' v-model="item.price"></v-text-field></td>
+                                    <td><v-text-field type='number' min="0" step=".1" v-model.number="item.quantity"></v-text-field></td>
+                                    <td><v-text-field type='number' :rules="[numberRule]" v-model.number="item.price" ></v-text-field></td>
                                     <td>${{ item.quantity* item.price }}</td>
                                     </tr>
                                                                 
@@ -228,20 +228,20 @@
                                     </template>
                             </v-data-table>
                             <v-flex class="text-xs-right">
-                                <strong>Total Partial:</strong> ${{totalPartial=( totalNeto-totalTax).toFixed(2)}}
+                                <strong>Total Partial:</strong> ${{totalPartial=( total-totalTax).toFixed(2)}}
                             </v-flex>
                             <v-flex class="text-xs-right">
-                                <strong>Total Tax:</strong> ${{totalTax=((totalNeto * tax)/(100 + tax)).toFixed(2)}}
+                                <strong>Total Tax:</strong> ${{totalTax=((total * tax)/(100 + tax)).toFixed(2)}}
                             </v-flex>
                             <v-flex class="text-xs-right">
-                                <strong>Total Neto:</strong> ${{totalNeto= (calculeTotal).toFixed(2)}}
+                                <strong>Total Neto:</strong> ${{total= (calculeTotal).toFixed(2)}}
                             </v-flex>
                         </v-flex>
                         <v-flex xs12 sm12 md12 lg12 xl12>
                              <div class="red--text" v-for="v in validationMessage" :key="v" v-text="v"></div>
                         </v-flex>
                         <v-flex xs12 sm12 md12 lg12 xl12>
-                            <v-btn @click="disableNew" color="blue darken-1" text>Cancelar</v-btn>
+                            <v-btn @click="disableNew()" color="blue darken-1" text>Cancelar</v-btn>
                             <v-btn @click="save()" color="success">Save</v-btn>
                         </v-flex>
                 </v-layout>
@@ -256,6 +256,11 @@ import axios from 'axios'
 export default {
     data(){
     return {
+                 numberRule: v  => {
+      if (!v.trim()) return true;
+      if (!isNaN(parseFloat(v)) && v >= 0 && v <= 999) return true;
+      return 'Number has to be between 0 and 999';
+    },
                 entries:[],
                 dialog: false,
                  headers: [
@@ -439,9 +444,9 @@ export default {
                 },
                 clear(){
                     this.id="";
+                    this.type_Voucher="";
                     this.idprovider="";
-                    this.type_document="";
-                    this.num_document="";
+                    this.num_Voucher=0;
                     this.tax="18";
                     this.Code="";
                     this.details="";
@@ -481,6 +486,7 @@ export default {
                         return;
                     }
                        let me = this; 
+                       console.log(me.details)
                        console.log("Id Usuario "+ me.$store.state.user.idUser,)
                         this.StructureData = {
                                             IdProvider: me.idprovider,
@@ -488,8 +494,8 @@ export default {
                                             Type_Voucher: me.type_Voucher,
                                             Num_Voucher:me.num_Voucher,
                                             Tax: me.tax,
-                                            Total: me.total,  
-                                            Details: me.details
+                                            Total: parseFloat( me.total),  
+                                            detail_entry: me.details
                             };
                        var postHeaders = {
                                 'Content-Type': 'application/json',
@@ -498,7 +504,8 @@ export default {
                        axios.post('api/Entries/AddEntry',this.StructureData,{
                            headers: postHeaders
                        } ).then(function(response){
-                            me.close();
+                           console.log(response);
+                            me.disableNew()
                             me.list()
                             me.clear();
                        }).catch(function(error){
