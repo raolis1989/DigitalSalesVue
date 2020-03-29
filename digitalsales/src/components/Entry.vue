@@ -76,11 +76,11 @@
                          <v-dialog v-model="adModal" max-width="290">
                              <v-card>
                                  <v-card-title class="headline" v-if="adAction==1">Activate Item?</v-card-title>
-                                 <v-card-title class="headline" v-if="adAction==2">Deactivate Item?</v-card-title>
+                                 <v-card-title class="headline" v-if="adAction==2">Anulate Item?</v-card-title>
                                  <v-card-text>
                                      Estas a punto de 
                                      <span v-if="adAction==1">Activar</span>
-                                     <span v-if="adAction==2">Desactivar</span>
+                                     <span v-if="adAction==2">Anulate</span>
                                      el item {{adName}}
                                  </v-card-text>
                                  <v-card-actions>
@@ -92,7 +92,7 @@
                                          Activate
                                      </v-btn>
                                      <v-btn  v-if="adAction==2" color="orange darken-4" text="text" @click="DesactivarArticulo">
-                                         Deactivate
+                                         Anulate
                                      </v-btn>
                                  </v-card-actions>
                              </v-card>
@@ -123,15 +123,7 @@
                             >
                                 block
                             </v-icon>
-                        </template>
-                        <template v-else>
-                            <v-icon
-                            @click="ActivateDeactivateView(1,item)"
-                            >
-                                check
-                            </v-icon>
-                        </template>
-                        
+                        </template>                
                     </td>
                     <td>{{ item.userName}}</td>
                     <td>{{ item.providerName}}</td>
@@ -242,7 +234,7 @@
                         </v-flex>
                         <v-flex xs12 sm12 md12 lg12 xl12>
                             <v-btn @click="disableNew()" color="blue darken-1" text>Cancelar</v-btn>
-                            <v-btn  @click="save()" color="success">Save</v-btn>
+                            <v-btn v-if="viewDet==0" @click="save()" color="success">Save</v-btn>
                         </v-flex>
                 </v-layout>
             </v-container>
@@ -303,6 +295,7 @@ export default {
                          articles:[],
                          textFind:'',
                          viewArticles:0,
+                         viewDet:0,
                          validation:'',
                          validationMessage:[],
                          adModal:0,
@@ -407,6 +400,7 @@ export default {
                 this.Tax= item.tax;
                 this.listDetails(item.idEntry);
                 this.viewNew=1;
+                this.viewDet=1;
                 //this.viewDetail=1;
             },
             showArticles(){
@@ -476,6 +470,7 @@ export default {
                     this.totalTax=0;
                     this.totalPartial=0;
                     this.articles=[];
+                    this.viewDet=0;
                 },
                   force(){
                     this.validation=0;
@@ -539,11 +534,8 @@ export default {
                 },
                 ActivateDeactivateView(actionitem, item){
                     this.adModal=1;
-                    this.adName= item.name;
-                    this.adIdUser= item.idRole;
-
-
-
+                    this.adName= item.num_Voucher;
+                    this.adIdUser= item.idEntry;
 
                     if(actionitem==1){
                         this.adAction=1;
@@ -557,25 +549,25 @@ export default {
                     }
                   
                 },
-                ActivarArticulo(){
-                                let me = this; 
-                                let header={"Authorization" : "Bearer " + this.$store.state.token};
-                                let configuration={ headers: header};
-                                var postHeaders = {
-                                'Content-Type': 'application/json',
-                                'Authorization': 'Bearer ' + this.$store.state.token,
-                                 };
-                            axios.put('api/Users/ActivateUser/'+this.adIdUser,configuration,{headers:postHeaders})
-                            .then(function(response){
-                                me.adModal=0;
-                                me.adAction=0;
-                                me.adName="";
-                                me.adIdUser=""
-                                me.list();
-                            }).catch(function(error){
-                                console.log(error);
-                            });
-                },
+                // ActivarArticulo(){
+                //                 let me = this; 
+                //                 let header={"Authorization" : "Bearer " + this.$store.state.token};
+                //                 let configuration={ headers: header};
+                //                 var postHeaders = {
+                //                 'Content-Type': 'application/json',
+                //                 'Authorization': 'Bearer ' + this.$store.state.token,
+                //                  };
+                //             axios.put('api/Users/ActivateUser/'+this.adIdUser,configuration,{headers:postHeaders})
+                //             .then(function(response){
+                //                 me.adModal=0;
+                //                 me.adAction=0;
+                //                 me.adName="";
+                //                 me.adIdUser=""
+                //                 me.list();
+                //             }).catch(function(error){
+                //                 console.log(error);
+                //             });
+                // },
                 DesactivarArticulo(){
                                 let me = this; 
                                 let header={"Authorization" : "Bearer " + this.$store.state.token};
@@ -584,7 +576,7 @@ export default {
                                 'Content-Type': 'application/json',
                                 'Authorization': 'Bearer ' + this.$store.state.token,
                                  };
-                            axios.put('api/Users/DeactivateUser/'+this.adIdUser,configuration,{headers:postHeaders})
+                            axios.put('api/Entries/AnulateEntry/'+this.adIdUser,configuration,{headers:postHeaders})
                             .then(function(response){
                                 me.adModal=0;
                                 me.adAction=0;
