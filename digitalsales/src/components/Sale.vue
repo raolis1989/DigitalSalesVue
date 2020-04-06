@@ -3,7 +3,7 @@
         <v-flex>  
         
                 <v-toolbar flat color="white">
-                    <v-toolbar-title>Entries</v-toolbar-title>
+                    <v-toolbar-title>Sales</v-toolbar-title>
                         <v-divider
                             class="mx-4"
                             inset
@@ -99,7 +99,7 @@
              
                 <v-data-table
                 :headers="headers"
-                :items="entries"
+                :items="sales"
                 sort-by="calories"
                 class="elevation-1"
                 v-if="viewNew==0"
@@ -124,7 +124,7 @@
                         </template>                
                     </td>
                     <td>{{ item.userName}}</td>
-                    <td>{{ item.providerName}}</td>
+                    <td>{{ item.clientName}}</td>
                     <td>{{ item.type_Voucher }}</td>
                     <td>{{ item.num_Voucher }}</td>
                     <td>{{ item.date_Time   }}</td>
@@ -247,12 +247,12 @@ export default {
     data(){
     return {
               
-                entries:[],
+                sales:[],
                 dialog: false,
                  headers: [
                     { text: 'Actions', value: 'action', sortable: false },
                     { text: 'User', value: 'userName' },
-                    { text: 'Provider', value: 'providerName' },
+                    { text: 'Client', value: 'clientName' },
                     { text: 'Type Voucher', value: 'type_Voucher' },
                     { text: 'Number Voucher', value: 'num_Voucher', sortable:false },
                     { text: 'Date', value: 'date_Time', sortable:false },
@@ -421,14 +421,13 @@ export default {
                 let url='';
                 console.log(me.search);
                 if(!me.search){
-                     url='api/Entries/List';   
+                     url='api/Sales/List';   
                 }
                 else{
-                     url='api/Entries/ListEntriesFilter/'+me.search; 
+                     url='api/Sales/ListEntriesFilter/'+me.search; 
                 }
                 axios.get(url,configuration).then(function(response){
-                    me.entries= response.data
-                    console.log(me.entries);
+                    me.sales= response.data
                 }).catch(function(error){
                         console.log(error)
                 });
