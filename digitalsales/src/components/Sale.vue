@@ -162,8 +162,8 @@
                             </v-text-field>
                         </v-flex>
                         <v-flex xs12 sm8 md8 lg8 xl8>
-                            <v-select v-model="idprovider"
-                            :items="providers" label="Providers">
+                            <v-select v-model="idclient"
+                            :items="clients" label="Clients">
                             </v-select>
                         </v-flex>
                         <v-flex xs12 sm4 md4 lg4 xl4>
@@ -208,7 +208,8 @@
                                     <td>{{ item.article}}</td>
                                     <td><v-text-field type='number' min="0" step=".1" v-model.number="item.quantity"></v-text-field></td>
                                     <td><v-text-field type='number' v-model.number="item.price" ></v-text-field></td>
-                                    <td>${{ item.quantity* item.price }}</td>
+                                    <td><v-text-field type='number' v-model.number="item.discount" ></v-text-field></td>
+                                    <td>${{ item.quantity* item.price - props.item.discount }}</td>
                                     </tr>
                                                                 
                                         
@@ -266,6 +267,7 @@ export default {
                     { text: 'Article', value: 'article' },
                     { text: 'Quantity', value: 'quantity', sortable:false },
                     { text: 'Price', value: 'price', sortable:false },
+                    { text: 'Discount', value: 'discount', sortable:false },
                     { text: 'Subtotal', value: 'subtotal', sortable:false },
                     
                         ],
@@ -273,8 +275,8 @@ export default {
                         search:'',              
                          id:'',
                          type_Voucher:'',
-                         idprovider:'',
-                         providers:[],
+                         idclient:'',
+                         clients:[],
                          type_document:'',
                          vouchers:['FACTURA', 'BOLETA', 'TICKET', 'GUIA'],
                          num_Voucher:0,
@@ -327,7 +329,7 @@ export default {
         created () {
 
         this.list();
-        this.selectProviders();
+        this.selectClients();
         },
     methods:{
              viewerNew(){this.viewNew=1;},
@@ -443,16 +445,15 @@ export default {
                     console.log(error);
                 });
             },
-            selectProviders(){
+            selectClients(){
                 let me= this;
-                var ProvidersArray=[];
+                var ClientsArray=[];
                   let header={"Authorization" : "Bearer " + this.$store.state.token};
                 let configuration={ headers: header};
-                axios.get('api/Persons/SelectProviders',configuration).then(function(response){
-                    ProvidersArray= response.data;
-                    console.log(ProvidersArray);
-                    ProvidersArray.map(function(x){
-                        me.providers.push({text: x.name, value: x.idPerson})
+                axios.get('api/Persons/SelectClients',configuration).then(function(response){
+                    ClientsArray= response.data;
+                    ClientsArray.map(function(x){
+                        me.clients.push({text: x.name, value: x.idPerson})
                     });
                 }).catch(function(error){
                         console.log(error)
