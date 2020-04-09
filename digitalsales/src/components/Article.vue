@@ -3,6 +3,12 @@
         <v-flex>  
         
                 <v-toolbar flat color="white">
+                    <v-btn @click="createPDF()"><v-icon>print</v-icon></v-btn>
+                    <v-divider
+                            class="mx-4"
+                            inset
+                            vertical
+                        ></v-divider>
                     <v-toolbar-title>Articles</v-toolbar-title>
                         <v-divider
                             class="mx-4"
@@ -125,7 +131,7 @@
                         </template>
                         
                     </td>
-                     <td>{{ item.code }}</td>
+                    <td>{{ item.code }}</td>
                     <td>{{ item.name }}</td>
                     <td>{{ item.categoryName }}</td>
                     <td>{{ item.stock }}</td>
@@ -157,6 +163,8 @@
 
 <script>
 import axios from 'axios'
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
 export default {
     data(){
     return {
@@ -215,6 +223,52 @@ export default {
                      else return 'red'
                   
                 },
+            createPDF(){
+             var columns = [{
+                        title: "Name",
+                        dataKey: "name"
+                    },
+                    {
+                        title: "Code",
+                        dataKey: "code"
+                    },
+                    {
+                        title:"Category",
+                        dataKey:"categoryName"
+                    },
+                    {
+                        title: "Stock",
+                        dataKey: "stock"
+                    },
+                    {
+                        title:"Price Sale",
+                        dataKey:"price_Sale"
+                    }
+                ];
+
+                var rows = [];
+                this.articles.map(function(x){
+                rows.push({name: x.name, code: x.code, categoryName:x.categoryName, stock:x.stock,  price_Sale: x.price_Sale})
+                });
+
+                console.log(rows)
+
+
+                var doc = new jsPDF('p', 'pt');
+
+                var header = function (data) {
+                    doc.setFontSize(18);
+                    doc.setTextColor(40);
+                    doc.setFontStyle('normal');
+
+                    doc.text("List Articles", data.settings.margin.left, 50);
+                };
+
+                doc.autoTable(columns, rows, {margin: {top: 80}, didDrawPage : header});
+
+                doc.save("Articles.pdf");
+
+            },
             list(){
                 let me= this;
                 let header={"Authorization" : "Bearer " + this.$store.state.token};
