@@ -209,7 +209,7 @@
                                     <td><v-text-field type='number' min="0" step=".1" v-model.number="item.quantity"></v-text-field></td>
                                     <td><v-text-field type='number' v-model.number="item.price" ></v-text-field></td>
                                     <td><v-text-field type='number' v-model.number="item.discount" ></v-text-field></td>
-                                    <td>${{ item.quantity* item.price - props.item.discount }}</td>
+                                    <td>${{ item.quantity* item.price - item.discount }}</td>
                                     </tr>
                                                                 
                                         
@@ -314,7 +314,7 @@ export default {
             calculeTotal:function(){
                 var resultado=0.0;
                 for (var i=0; i<this.details.length;i++){
-                    resultado= resultado+(this.details[i].price*this.details[i].quantity);
+                    resultado= resultado+(this.details[i].price*this.details[i].quantity- this.details[i].discount);
                 }
                 return resultado;
             }
@@ -349,7 +349,8 @@ export default {
                     {idArticle:data['idArticle'],
                     article:data['name'],
                     quantity:1,
-                    price:1
+                    price:data['price_Sale'],
+                    discount:0
                     })
                      }
                     
@@ -372,7 +373,7 @@ export default {
                 me.errorArticle=null;
                 let header={"Authorization" : "Bearer " + this.$store.state.token};
                 let configuration={ headers: header};
-                axios.get('api/Articles/ObtainArticleForCode/'+this.Code  ,configuration).then(function(response){
+                axios.get('api/Articles/ObtainArticleForCodeForSale/'+this.Code  ,configuration).then(function(response){
                     console.log(response)
                     
                    me.addDetail(response.data)
@@ -385,7 +386,7 @@ export default {
                 let me =this; 
                 let header={"Authorization": "Bearer " + this.$store.state.token};
                 let configuration = {headers : header};
-                axios.get('api/Articles/ListEntry/'+me.textFind, configuration).then(function(response){
+                axios.get('api/Articles/ListSale/'+me.textFind, configuration).then(function(response){
                         me.articles= response.data || [];
                 }).catch(function(error){
                     console.log(error);
@@ -395,9 +396,9 @@ export default {
                 this.clear();
                 this.type_Voucher= item.type_Voucher;
                 this.num_Voucher= item.num_Voucher;
-                this.idprovider= item.IdProvider;
+                this.idclient= item.idClient;
                 this.Tax= item.tax;
-                this.listDetails(item.idEntry);
+                this.listDetails(item.idSale);
                 this.viewNew=1;
                 this.viewDet=1;
                 //this.viewDetail=1;
@@ -426,7 +427,7 @@ export default {
                      url='api/Sales/List';   
                 }
                 else{
-                     url='api/Sales/ListEntriesFilter/'+me.search; 
+                     url='api/Sales/ListSalesFilter/'+me.search; 
                 }
                 axios.get(url,configuration).then(function(response){
                     me.sales= response.data
@@ -438,7 +439,7 @@ export default {
                 let me =this; 
                 let header={"Authorization": "Bearer " + this.$store.state.token};
                 let configuration = {headers : header};
-                axios.get('api/Entries/ListDetailEntry/'+id, configuration).then(function(response){
+                axios.get('api/Sales/ListDetailSale/'+id, configuration).then(function(response){
                         me.details= response.data= response.data || [];
                          console.log(me.details);
                 }).catch(function(error){
@@ -466,7 +467,7 @@ export default {
                 clear(){
                     this.id="";
                     this.type_Voucher="";
-                    this.idprovider="";
+                    this.idclient="";
                     this.num_Voucher=0;
                     this.tax="18";
                     this.Code="";
@@ -480,8 +481,8 @@ export default {
                   force(){
                     this.validation=0;
                     this.validationMessage=[];
-                    if(!this.idprovider){
-                        this.validationMessage.push("Selecciones un proveedor.")
+                    if(!this.idclient){
+                        this.validationMessage.push("Selecciones un cliente.")
                     }
                     if(!this.type_Voucher){
                         this.validationMessage.push("Seleccione un tipo de documento");
@@ -509,22 +510,20 @@ export default {
                         return;
                     }
                        let me = this; 
-                       console.log(me.details)
-                       console.log("Id Usuario "+ me.$store.state.user.idUser,)
                         this.StructureData = {
-                                            IdProvider: me.idprovider,
+                                            IdClient: me.idclient,
                                             IdUser:parseInt(me.$store.state.user.idUser),
                                             Type_Voucher: me.type_Voucher,
                                             Num_Voucher:me.num_Voucher,
                                             Tax: me.tax,
                                             Total: parseFloat( me.total),  
-                                            detail_entry: me.details
+                                            detail_sale: me.details
                             };
                        var postHeaders = {
                                 'Content-Type': 'application/json',
                                 'Authorization': 'Bearer ' + this.$store.state.token,
                                         };
-                       axios.post('api/Entries/AddEntry',this.StructureData,{
+                       axios.post('api/Sales/AddSale',this.StructureData,{
                            headers: postHeaders
                        } ).then(function(response){
                            
@@ -540,7 +539,7 @@ export default {
                 ActivateDeactivateView(actionitem, item){
                     this.adModal=1;
                     this.adName= item.num_Voucher;
-                    this.adIdUser= item.idEntry;
+                    this.adIdUser= item.idSale;
 
                     if(actionitem==1){
                         this.adAction=1;
@@ -554,25 +553,6 @@ export default {
                     }
                   
                 },
-                // ActivarArticulo(){
-                //                 let me = this; 
-                //                 let header={"Authorization" : "Bearer " + this.$store.state.token};
-                //                 let configuration={ headers: header};
-                //                 var postHeaders = {
-                //                 'Content-Type': 'application/json',
-                //                 'Authorization': 'Bearer ' + this.$store.state.token,
-                //                  };
-                //             axios.put('api/Users/ActivateUser/'+this.adIdUser,configuration,{headers:postHeaders})
-                //             .then(function(response){
-                //                 me.adModal=0;
-                //                 me.adAction=0;
-                //                 me.adName="";
-                //                 me.adIdUser=""
-                //                 me.list();
-                //             }).catch(function(error){
-                //                 console.log(error);
-                //             });
-                // },
                 DesactivarArticulo(){
                                 let me = this; 
                                 let header={"Authorization" : "Bearer " + this.$store.state.token};
@@ -581,7 +561,7 @@ export default {
                                 'Content-Type': 'application/json',
                                 'Authorization': 'Bearer ' + this.$store.state.token,
                                  };
-                            axios.put('api/Entries/AnulateEntry/'+this.adIdUser,configuration,{headers:postHeaders})
+                            axios.put('api/Sales/AnulateSale/'+this.adIdUser,configuration,{headers:postHeaders})
                             .then(function(response){
                                 me.adModal=0;
                                 me.adAction=0;
