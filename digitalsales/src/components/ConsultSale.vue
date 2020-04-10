@@ -10,9 +10,21 @@
                             vertical
                         ></v-divider>
                         <v-spacer></v-spacer>
-                            <v-text-field v-if="viewNew==0" class="text-xs-center" v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
+                            Desde:&nbsp;
+                            <v-text-field type="date" v-if="viewNew==0" class="text-xs-center" v-model="DateInit"></v-text-field>
+                            <v-divider
+                            class="mx-4"
+                            inset
+                            vertical
+                        ></v-divider>
+                            Hasta:&nbsp;
+                            <v-text-field type="date" v-if="viewNew==0" class="text-xs-center" v-model="DateEnd"></v-text-field>
+                            <v-divider
+                            class="mx-4"
+                            inset
+                            vertical
+                        ></v-divider>
                              <v-btn v-if="viewNew==0" @click="list()"  color="primary" dark class="mb-2">Find</v-btn>
-
                         <v-dialog v-model="comprobanteModal" max-width="1000px">
                             <v-card>
                                 <v-card-text>
@@ -320,7 +332,9 @@ export default {
                          numDocument:'',
                          address:'',
                          phone:'',
-                         email:''
+                         email:'',
+                         DateInit:'',
+                         DateEnd:''
 
             }
 
@@ -432,11 +446,11 @@ export default {
                 let configuration={ headers: header};
                 let url='';
                 console.log(me.search);
-                if(!me.search){
+                if(!me.DateInit || !me.DateEnd){
                      url='api/Sales/List';   
                 }
                 else{
-                     url='api/Sales/ListSalesFilter/'+me.search; 
+                     url='api/Sales/FilterDates/'+me.DateInit+'/'+me.DateEnd; 
                 }
                 axios.get(url,configuration).then(function(response){
                     me.sales= response.data
