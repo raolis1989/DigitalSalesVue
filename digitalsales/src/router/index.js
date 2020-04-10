@@ -11,6 +11,7 @@ import Login from '../components/Login.vue'
 import store from '../store/index'
 import Entry from '../components/Entry.vue'
 import Sale from '../components/Sale.vue'
+import ConsultSale from '../components/ConsultSale.vue'
 
 Vue.use(VueRouter)
 
@@ -24,6 +25,15 @@ const routes = [
       Warehouse :true,
       Seller :true
 
+    }
+  },
+  {
+    path:'consultsale',
+    name:'consultsale',
+    component:ConsultSale,
+    meta:{
+      Admin:true,
+      Seller:true,
     }
   },
   {
